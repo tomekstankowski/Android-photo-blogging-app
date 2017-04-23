@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Training Application</string>
+    <string name="capture">Capture!</string>
+    <string name="home">Home</string>
+    <string name="discover">Discover</string>
+    <string name="me">Me</string>
+    <string name="settings">Settings</string>
+    <string name="error">An error occurred.</string>
+    <string name="save_error">Sorry, could not save your photo.</string>
+    <string name="save">Save</string>
+    <string name="back">Back</string>
+    <string name="title">Title</string>
+    <string name="desc">Description</string>
+    <string name="last_photo">Last photo</string>
+</resources>
