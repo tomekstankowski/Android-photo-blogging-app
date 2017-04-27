@@ -9,15 +9,22 @@ import com.google.firebase.database.ValueEventListener;
  */
 
 public class DataBaseAccessor {
+    protected FirebaseDatabase mDatabase;
+
+    public DataBaseAccessor(){
+        mDatabase = FirebaseDatabase.getInstance();
+    }
 
     protected Task<Void> setValue(String path, Object item){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        return database.getReference(path).setValue(item);
+        return mDatabase.getReference(path).setValue(item);
+    }
+
+    protected void listenToValueChange(String path, ValueEventListener listener){
+        mDatabase.getReference(path).addValueEventListener(listener);
     }
 
     protected void getValue(String path, ValueEventListener listener){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference(path).addValueEventListener(listener);
+        mDatabase.getReference(path).addListenerForSingleValueEvent(listener);
     }
 
 }

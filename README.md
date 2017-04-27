@@ -3,4 +3,5 @@
 Application  will allow user to take a photo through the
 app, add some information about it and save both in 
 database(Firebase Storage and Firebase Database). User can
- also see his and other users photos.
+ also browse his and other users photos. User 
+ authentication might also be provided.

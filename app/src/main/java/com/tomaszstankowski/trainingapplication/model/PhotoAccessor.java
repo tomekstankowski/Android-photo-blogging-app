@@ -17,7 +17,7 @@ public class PhotoAccessor extends DataBaseAccessor {
     }
 
     public Task<Void> setLastPhoto(Photo photo){
-        return setValue("photos/last_photo", photo.id);
+        return setValue("photos/last_photo", photo.getKey());
     }
 
     public void getPhoto(String key, ValueEventListener listener){
@@ -28,11 +28,12 @@ public class PhotoAccessor extends DataBaseAccessor {
         ValueEventListener keyFetchListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Object val = dataSnapshot.getValue();
-                if(val != null) {
-                    String key = val.toString();
+                String key = dataSnapshot.getValue(String.class);
+                if(key != null) {
                     getPhoto(key, listener);
                 }
+                else
+                    listener.onDataChange(dataSnapshot);
             }
 
             @Override
@@ -40,6 +41,6 @@ public class PhotoAccessor extends DataBaseAccessor {
                 listener.onCancelled(databaseError);
             }
         };
-        getValue("photos/last_photo",keyFetchListener);
+        getValue("photos/last_photo", keyFetchListener);
     }
 }

@@ -1,31 +1,29 @@
-package com.tomaszstankowski.trainingapplication.view;
+package com.tomaszstankowski.trainingapplication.main;
 
-import android.app.Activity;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.tomaszstankowski.trainingapplication.R;
-import com.tomaszstankowski.trainingapplication.model.DAO;
-import com.tomaszstankowski.trainingapplication.model.Model;
-import com.tomaszstankowski.trainingapplication.presenter.Presenter;
+import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragment;
 
 /**
- * Entry point for initializing other Views and Model
+ * Entry point for initializing other Views(fragments)
  */
 
-public class MainActivity extends AppCompatActivity implements View{
+public class MainActivity extends AppCompatActivity implements MainView {
     private final static String PHOTO_CAPTURE_FRAGMENT_TAG = "PHOTO_CAPTURE_FRAGMENT";
     private PhotoCaptureFragment mPhotoCaptureFragment;
-    private Model model;
+    private MainPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        model = new DAO();
+        if(mPresenter == null)
+            mPresenter = new MainPresenterImpl(this);
+        //fragment that shows up after launch
         mPhotoCaptureFragment = (PhotoCaptureFragment) getSupportFragmentManager()
                 .findFragmentByTag(PHOTO_CAPTURE_FRAGMENT_TAG);
         if(mPhotoCaptureFragment == null) {
@@ -34,28 +32,18 @@ public class MainActivity extends AppCompatActivity implements View{
             fragmentManager.beginTransaction()
                     .add(R.id.activity_main_fragment_container, mPhotoCaptureFragment, PHOTO_CAPTURE_FRAGMENT_TAG)
                     .commit();
-            mPhotoCaptureFragment.getPresenter().setModel(model);
         }
         setBottomNavigation();
     }
 
     @Override
-    public Presenter getPresenter(){
-        return null;
-    }
-
-    @Override
-    public Activity getContext(){
-        return this;
-    }
-
-    @Override
-    public void showMessage(String message){
-        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+    public void onDestroy(){
+        mPresenter.onDestroy();
+        super.onDestroy();
     }
 
     /**
-     * Called in onCreate()
+     * Called in onCreate().
      */
     private void setBottomNavigation(){
         BottomNavigationView bar = (BottomNavigationView)findViewById(R.id.activity_main_bottom_navigation);
@@ -66,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements View{
                             .findFragmentByTag(PHOTO_CAPTURE_FRAGMENT_TAG);
                     if(mPhotoCaptureFragment == null) {
                         mPhotoCaptureFragment = new PhotoCaptureFragment();
-                        mPhotoCaptureFragment.getPresenter().setModel(model);
                     }
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     fragmentManager.beginTransaction()

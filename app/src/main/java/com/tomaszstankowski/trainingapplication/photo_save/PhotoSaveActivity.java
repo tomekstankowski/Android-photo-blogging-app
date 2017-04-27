@@ -1,7 +1,5 @@
-package com.tomaszstankowski.trainingapplication.view;
+package com.tomaszstankowski.trainingapplication.photo_save;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,11 +8,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tomaszstankowski.trainingapplication.R;
-import com.tomaszstankowski.trainingapplication.presenter.PhotoSavePresenter;
-import com.tomaszstankowski.trainingapplication.presenter.PhotoSavePresenterImpl;
-import com.tomaszstankowski.trainingapplication.presenter.Presenter;
 
 /**
  * Activity starts after user captures photo.
@@ -30,8 +30,8 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_save);
         if (presenter == null)
-            presenter = new PhotoSavePresenterImpl();
-        presenter.setView(this);
+            presenter = new PhotoSavePresenterImpl(this);
+        mProgressBar = (ProgressBar) findViewById(R.id.activity_photo_save_progressbar);
         setImage();
         setBackButton();
         setSaveButton();
@@ -45,13 +45,21 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
 
     private void setImage() {
         SimpleDraweeView photoView = (SimpleDraweeView) findViewById(R.id.activity_photo_save_imageview_photo);
-        Uri uri = presenter.getImageUri();
-        photoView.setImageURI(uri);
+        Uri uri = presenter.getImageUri(this);
+        int width = 50, height = 50;
+        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
+                .setResizeOptions(new ResizeOptions(width, height))
+                .build();
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setOldController(photoView.getController())
+                .setImageRequest(request)
+                .build();
+        photoView.setController(controller);
     }
 
     private void setBackButton() {
         Button button = (Button) findViewById(R.id.activity_photo_save_button_back);
-        button.setOnClickListener(view -> presenter.onBackButtonClicked());
+        button.setOnClickListener(view -> presenter.onBackButtonClicked(this));
     }
 
     private void setSaveButton() {
@@ -61,40 +69,17 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
             String title = titleLabel.getText().toString();
             EditText descLabel = (EditText) findViewById(R.id.activity_photo_save_edittext_desc);
             String desc = descLabel.getText().toString();
-            presenter.onSaveButtonClicked(title, desc);
+            presenter.onSaveButtonClicked(this, title, desc);
         });
     }
 
     @Override
-    public Presenter getPresenter() {
-        return presenter;
-    }
-
-    @Override
-    public Activity getContext(){
-        return this;
-    }
-
-    @Override
-    public void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    public void showMessage(String message){
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showProgressBar() {
-        if (mProgressBar == null)
-            mProgressBar = (ProgressBar) findViewById(R.id.activity_photo_save_progressbar);
         mProgressBar.setVisibility(android.view.View.VISIBLE);
-    }
-
-    @Override
-    public void hideProgressBar() {
-        if (mProgressBar != null)
-            mProgressBar.setVisibility(android.view.View.GONE);
-    }
-
-    @Override
-    public Activity getActivity(){
-        return this;
     }
 }
