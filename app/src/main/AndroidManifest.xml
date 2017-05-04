@@ -27,6 +27,8 @@
 
         <activity android:name=".photo_save.PhotoSaveActivity"/>
 
+        <activity android:name=".photo_details.PhotoDetailsActivity" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.android.fileprovider"

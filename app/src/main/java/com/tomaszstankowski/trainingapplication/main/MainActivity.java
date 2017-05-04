@@ -1,9 +1,9 @@
 package com.tomaszstankowski.trainingapplication.main;
 
+import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragment;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 case R.id.activity_main_menu_discover:
                     //// TODO: 4/14/2017
                     break;
-                case R.id.activity_main_menu_me:
+                case R.id.activity_main_menu_my_profile:
                     //// TODO: 4/14/2017
                     break;
                 case R.id.activity_main_menu_settings:

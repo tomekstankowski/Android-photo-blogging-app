@@ -1,6 +1,5 @@
 package com.tomaszstankowski.trainingapplication.photo_capture;
 
-import android.content.Context;
 import android.content.Intent;
 
 
@@ -9,11 +8,13 @@ import android.content.Intent;
  */
 
 public interface PhotoCapturePresenter{
-    void onViewUpdateRequest();
+    void onCreateView(PhotoCaptureView view);
 
-    void onCaptureButtonClicked(Context context);
+    void onCaptureButtonClicked();
 
-    void onActivityResult(Context context, int requestCode, int resultCode, Intent data);
+    void onImageClicked();
+
+    void onActivityResult(int requestCode, int resultCode, Intent data);
 
     void onDestroyView();
 }

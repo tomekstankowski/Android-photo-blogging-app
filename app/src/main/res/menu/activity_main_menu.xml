@@ -15,9 +15,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/activity_main_menu_me"
+        android:id="@+id/activity_main_menu_my_profile"
         android:icon="@drawable/ic_person_white_24dp"
-        android:title="@string/me"
+        android:title="@string/my_profile"
         app:showAsAction="ifRoom" />
 
     <item

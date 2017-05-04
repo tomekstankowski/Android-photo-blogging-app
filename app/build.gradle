@@ -20,6 +20,9 @@ android {
         }
 
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -46,7 +49,10 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.facebook.fresco:fresco:1.2.0'
+    compile 'id.zelory:compressor:1.0.4'
     apply plugin: 'com.google.gms.google-services'
     compile 'com.google.firebase:firebase-database:10.2.1'
+    compile 'com.google.firebase:firebase-storage:10.2.1'
     testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
 }

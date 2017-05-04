@@ -11,17 +11,24 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import id.zelory.compressor.Compressor;
+
 /**
- * Support class with static methods
+ * Support class performing operations on image.
  */
 
 public class PhotoService {
+    private Context mContext;
 
-    public static File createPhotoFile(Context context) throws IOException{
+    public PhotoService(Context context) {
+        mContext = context;
+    }
+
+    public File createPhotoFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -29,17 +36,24 @@ public class PhotoService {
         );
     }
 
-    public static void addPhotoToGallery(Context context, File photoFile) {
+    public void addPhotoToGallery(File photoFile) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         Uri contentUri = Uri.fromFile(photoFile);
         mediaScanIntent.setData(contentUri);
-        context.sendBroadcast(mediaScanIntent);
+        mContext.sendBroadcast(mediaScanIntent);
     }
 
-    public static Uri getUriFromFile(Context context, File file){
+    public Uri getUriFromFile(File file) {
         if(file != null)
-            return FileProvider.getUriForFile(context, "com.example.android.fileprovider", file);
+            return FileProvider.getUriForFile(mContext, "com.example.android.fileprovider", file);
         return null;
+    }
+
+    public Uri compressImage(String path) {
+        File realImageFile = new File(path);
+        File compressedImageFile = Compressor.getDefault(mContext).compressToFile(realImageFile);
+        //somehow the method getUriFromFile doesn't work in this case (although it is recommended)
+        return Uri.fromFile(compressedImageFile);
     }
 
 
