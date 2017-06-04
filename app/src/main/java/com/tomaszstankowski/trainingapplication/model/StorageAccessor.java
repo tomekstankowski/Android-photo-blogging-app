@@ -11,11 +11,7 @@ import com.google.firebase.storage.UploadTask;
  */
 
 public class StorageAccessor {
-    private FirebaseStorage mStorage;
-
-    public StorageAccessor() {
-        mStorage = FirebaseStorage.getInstance();
-    }
+    private FirebaseStorage mStorage = FirebaseStorage.getInstance();
 
     public Task<Uri> getImageUri(Photo photo) {
         return mStorage.getReference("images").child(photo.key).getDownloadUrl();

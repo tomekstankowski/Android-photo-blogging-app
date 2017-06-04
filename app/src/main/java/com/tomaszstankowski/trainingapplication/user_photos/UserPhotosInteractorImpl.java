@@ -11,15 +11,10 @@ import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
 
 
 public class UserPhotosInteractorImpl implements UserPhotosInteractor {
-    private DataBaseAccessor mDataAccessor;
-    private StorageAccessor mResourceAccessor;
+    private DataBaseAccessor mDataAccessor = new DataBaseAccessor();
+    private StorageAccessor mResourceAccessor = new StorageAccessor();
     private DatabaseReference mRef;
     private ChildEventListener mListener;
-
-    public UserPhotosInteractorImpl() {
-        mDataAccessor = new DataBaseAccessor();
-        mResourceAccessor = new StorageAccessor();
-    }
 
     @Override
     public void addListenerForUserPhotosChanges(OnUserPhotosChangesListener listener) {

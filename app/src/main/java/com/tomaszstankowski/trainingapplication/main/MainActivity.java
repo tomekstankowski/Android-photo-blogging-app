@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragment;
+import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosFragment;
 
 /**
  * Entry point for initializing other Views(fragments)
@@ -14,7 +15,9 @@ import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragme
 
 public class MainActivity extends AppCompatActivity implements MainView {
     private final static String PHOTO_CAPTURE_FRAGMENT_TAG = "PHOTO_CAPTURE_FRAGMENT";
+    private final static String USER_PHOTOS_FRAGMENT_TAG = "USER_PHOTOS_FRAGMENT";
     private PhotoCaptureFragment mPhotoCaptureFragment;
+    private UserPhotosFragment mUserPhotosFragment;
     private MainPresenter mPresenter;
 
     @Override
@@ -48,14 +51,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
     private void setBottomNavigation(){
         BottomNavigationView bar = (BottomNavigationView)findViewById(R.id.activity_main_bottom_navigation);
         bar.setOnNavigationItemSelectedListener(item -> {
+            FragmentManager fragmentManager = getSupportFragmentManager();
             switch (item.getItemId()){
                 case R.id.activity_main_menu_home:
                     mPhotoCaptureFragment = (PhotoCaptureFragment)getSupportFragmentManager()
                             .findFragmentByTag(PHOTO_CAPTURE_FRAGMENT_TAG);
-                    if(mPhotoCaptureFragment == null) {
+                    if (mPhotoCaptureFragment == null)
                         mPhotoCaptureFragment = new PhotoCaptureFragment();
-                    }
-                    FragmentManager fragmentManager = getSupportFragmentManager();
                     fragmentManager.beginTransaction()
                             .replace(R.id.activity_main_fragment_container, mPhotoCaptureFragment, PHOTO_CAPTURE_FRAGMENT_TAG)
                             .commit();
@@ -64,7 +66,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     //// TODO: 4/14/2017
                     break;
                 case R.id.activity_main_menu_my_profile:
-                    //// TODO: 4/14/2017
+                    mUserPhotosFragment = (UserPhotosFragment) getSupportFragmentManager()
+                            .findFragmentByTag(USER_PHOTOS_FRAGMENT_TAG);
+                    if (mUserPhotosFragment == null)
+                        mUserPhotosFragment = new UserPhotosFragment();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.activity_main_fragment_container, mUserPhotosFragment, USER_PHOTOS_FRAGMENT_TAG)
+                            .commit();
                     break;
                 case R.id.activity_main_menu_settings:
                     //// TODO: 4/14/2017

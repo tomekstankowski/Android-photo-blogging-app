@@ -9,5 +9,7 @@ public interface PhotoDetailsPresenter {
 
     void onEditButtonClicked();
 
+    void onRemoveButtonClicked();
+
     void onDestroyView();
 }

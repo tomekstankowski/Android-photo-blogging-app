@@ -8,7 +8,7 @@
         android:id="@+id/activity_photo_details_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="0dp"
@@ -34,6 +34,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Body2"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/activity_photo_details_textview_desc"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -43,6 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Title"
         app:layout_constraintBottom_toTopOf="@+id/activity_photo_details_textview_title"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -50,24 +53,45 @@
         android:id="@+id/activity_photo_details_textview_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="1dp"
         android:layout_marginLeft="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/activity_photo_details_textview_title"
-        app:layout_constraintLeft_toRightOf="@+id/activity_photo_details_textview_author" />
+        android:fontFamily="sans-serif-condensed"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:textSize="@dimen/text_small"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_photo_details_textview_author"
+        app:layout_constraintLeft_toRightOf="@+id/activity_photo_details_textview_author"
+        app:layout_constraintTop_toTopOf="@+id/activity_photo_details_textview_author"
+        android:layout_marginTop="8dp"
+        app:layout_constraintVertical_bias="0.5" />
 
     <Button
         android:id="@+id/activity_photo_details_button_edit"
-        style="@style/Widget.AppCompat.Button.Borderless.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="9dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
+        style="@style/ButtonSmall"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/secondary_button"
         android:text="@string/edit"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_photo_details_image" />
+
+    <Button
+        android:id="@+id/activity_photo_details_button_remove"
+        style="@style/ButtonSmall"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/secondary_button_red"
+        android:text="@string/remove"
+        android:textColor="@color/red"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toRightOf="@+id/activity_photo_details_textview_desc"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/activity_photo_details_button_edit" />
 
     <ProgressBar
         android:id="@+id/activity_photo_details_progressbar"

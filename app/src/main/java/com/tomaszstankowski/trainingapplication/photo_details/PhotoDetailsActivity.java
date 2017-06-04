@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tomaszstankowski.trainingapplication.R;
@@ -22,6 +23,7 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     private TextView mDescTv;
     private TextView mDateTv;
     private Button mEditBttn;
+    private Button mRemoveBttn;
     private SimpleDraweeView mImage;
     private ProgressBar mProgressBar;
 
@@ -36,23 +38,27 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
         mDescTv = (TextView) findViewById(R.id.activity_photo_details_textview_desc);
         mDateTv = (TextView) findViewById(R.id.activity_photo_details_textview_date);
         mEditBttn = (Button) findViewById(R.id.activity_photo_details_button_edit);
+        mRemoveBttn = (Button) findViewById(R.id.activity_photo_details_button_remove);
         mImage = (SimpleDraweeView) findViewById(R.id.activity_photo_details_image);
         mProgressBar = (ProgressBar) findViewById(R.id.activity_photo_details_progressbar);
         mEditBttn.setOnClickListener(view -> mPresenter.onEditButtonClicked());
+        mRemoveBttn.setOnClickListener(view -> mPresenter.onRemoveButtonClicked());
         if (mPresenter == null)
             mPresenter = new PhotoDetailsPresenterImpl();
         mPresenter.onCreateView(this);
     }
 
     @Override
-    public void updateView(String title, String author, String desc, String date, Uri image, boolean isEditable) {
+    public void updateView(String title, String author, String desc, String date, Uri image, boolean isVisible) {
         mImage.setImageURI(image);
         mTitleTv.setText(title);
         mAuthorTv.setText(author);
         mDescTv.setText(desc);
         mDateTv.setText(date);
-        if (isEditable)
+        if (isVisible) {
             mEditBttn.setVisibility(View.VISIBLE);
+            mRemoveBttn.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -68,5 +74,10 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     @Override
     public void hideProgressBar() {
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }

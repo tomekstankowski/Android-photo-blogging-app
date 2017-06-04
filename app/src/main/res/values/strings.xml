@@ -9,9 +9,11 @@
     <string name="capture_error">An error occurred. Could not use the camera.</string>
     <string name="save_error">An error occurred. Could not save your photo.</string>
     <string name="load_error">An error occurred. Could not load the content.</string>
+    <string name="remove_error">>An error occurred. Could not remove the photo.</string>
     <string name="save">Save</string>
     <string name="back">Back</string>
     <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
     <string name="title">Title</string>
     <string name="desc">Description</string>
     <string name="last_photo">Your last photo</string>

@@ -10,15 +10,10 @@ import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
 
 
 public class PhotoCaptureInteractorImpl implements PhotoCaptureInteractor {
-    private DataBaseAccessor mDataAccessor;
-    private StorageAccessor mResourceAccessor;
+    DataBaseAccessor mDataAccessor = new DataBaseAccessor();
+    private StorageAccessor mResourceAccessor = new StorageAccessor();
     private DatabaseReference mRef;
     private ValueEventListener mListener;
-
-    public PhotoCaptureInteractorImpl() {
-        mDataAccessor = new DataBaseAccessor();
-        mResourceAccessor = new StorageAccessor();
-    }
 
     @Override
     public void addListenerForLastPhotoChanges(OnLastPhotoChangeListener listener, String userKey) {

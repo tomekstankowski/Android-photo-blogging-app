@@ -1,24 +1,16 @@
 package com.tomaszstankowski.trainingapplication.photo_details;
 
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.tomaszstankowski.trainingapplication.model.DataBaseAccessor;
 import com.tomaszstankowski.trainingapplication.model.Photo;
-import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
 
 public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor {
-    private DataBaseAccessor mDataAccessor;
-    private StorageAccessor mResourceAccessor;
+    private DataBaseAccessor mDataAccessor = new DataBaseAccessor();
     private DatabaseReference mRef;
     private ValueEventListener mListener;
-
-    public PhotoDetailsInteractorImpl() {
-        mDataAccessor = new DataBaseAccessor();
-        mResourceAccessor = new StorageAccessor();
-    }
 
     @Override
     public void addListenerForPhotoChanges(String key, OnPhotoChangeListener listener) {
@@ -27,10 +19,8 @@ public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Photo photo = dataSnapshot.getValue(Photo.class);
                 if (photo != null) {
-                    photo.key = dataSnapshot.getKey();
-                    mResourceAccessor.getImageUri(photo)
-                            .addOnSuccessListener(uri -> listener.onPhotoChange(photo, uri))
-                            .addOnFailureListener(e -> listener.onPhotoFetchError());
+                    photo.key = key;
+                    listener.onPhotoChange(photo);
                 } else
                     listener.onPhotoFetchError();
             }
@@ -47,5 +37,11 @@ public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor {
     public void removeListenerForPhotoChanges() {
         if (mRef != null)
             mRef.removeEventListener(mListener);
+    }
+
+    @Override
+    public void removePhoto(Photo photo, OnPhotoRemoveListener listener) {
+        mDataAccessor.removePhoto(photo).addOnSuccessListener(aVoid -> listener.onPhotoRemoveSuccess())
+                .addOnFailureListener(e -> listener.onPhotoRemoveFailure());
     }
 }

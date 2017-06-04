@@ -10,25 +10,33 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 /**
  * Class accessing Firebase Database.
  */
-
 public class DataBaseAccessor {
-    private FirebaseDatabase mDatabase;
+    private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-    public DataBaseAccessor(){
-        mDatabase = FirebaseDatabase.getInstance();
+    @Inject
+    public DataBaseAccessor() {
     }
 
     public Task<Void> savePhoto(Photo photo) {
         String key = mDatabase.getReference("photos").push().getKey();
         photo.key = key;
-        Map<String, Object> changedData = new HashMap<>();
-        changedData.put("users/" + photo.userKey + "/photos/" + key, true);
-        changedData.put("users/" + photo.userKey + "/lastPhoto", key);
-        changedData.put("photos/" + key, photo);
-        return mDatabase.getReference().updateChildren(changedData);
+        Map<String, Object> data = new HashMap<>();
+        data.put("users/" + photo.userKey + "/photos/" + key, true);
+        data.put("users/" + photo.userKey + "/lastPhoto", key);
+        data.put("photos/" + key, photo);
+        return mDatabase.getReference().updateChildren(data);
+    }
+
+    public Task<Void> removePhoto(Photo photo) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("users/" + photo.userKey + "/photos/" + photo.key, null);
+        data.put("photos/" + photo.key, null);
+        return mDatabase.getReference().updateChildren(data);
     }
 
     public Task<Void> editPhoto(Photo photo) {

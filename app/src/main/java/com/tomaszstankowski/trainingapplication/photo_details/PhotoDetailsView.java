@@ -10,7 +10,10 @@ import android.net.Uri;
  */
 
 public interface PhotoDetailsView {
-    void updateView(String title, String author, String desc, String date, Uri image, boolean isEditable);
+    /**
+     * @param isVisible tells whether 'edit' and 'remove' buttons should be visible
+     */
+    void updateView(String title, String author, String desc, String date, Uri image, boolean isVisible);
 
     void startActivity(Intent intent);
 
@@ -19,4 +22,6 @@ public interface PhotoDetailsView {
     void showProgressBar();
 
     void hideProgressBar();
+
+    void showMessage(String message);
 }

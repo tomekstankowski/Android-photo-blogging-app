@@ -9,4 +9,12 @@
         <item name="android:colorBackground">@color/colorBackground</item>
     </style>
 
+
+    <style name="ButtonSmall">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Small</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
 </resources>

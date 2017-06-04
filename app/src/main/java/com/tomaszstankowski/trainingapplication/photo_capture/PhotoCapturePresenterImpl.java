@@ -3,13 +3,14 @@ package com.tomaszstankowski.trainingapplication.photo_capture;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
-import com.tomaszstankowski.trainingapplication.service.PhotoService;
+import com.tomaszstankowski.trainingapplication.utils.PhotoService;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,18 +22,15 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_PHOTO_SAVE = 2;
     private static final String TEMP_IMAGE_PATH = "TEMP_IMAGE_PATH";
-    private static final String PHOTO_KEY = "PHOTO_KEY";
+    private static final String PHOTO = "PHOTO";
+    private static final String IMAGE_URI = "IMAGE_URI";
 
-    private Photo mLastPhoto;
+    private Photo mPhoto;
+    private Uri mImage;
     private File mTempImageFile;
     private PhotoService mService;
     private PhotoCaptureView mView;
-    private PhotoCaptureInteractor mInteractor;
-
-    public PhotoCapturePresenterImpl() {
-        mInteractor = new PhotoCaptureInteractorImpl();
-    }
-
+    private PhotoCaptureInteractor mInteractor = new PhotoCaptureInteractorImpl();
 
     @Override
     public void onDestroyView(){
@@ -50,7 +48,8 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
 
     @Override
     public void onLastPhotoChanged(Photo photo, Uri image) {
-        mLastPhoto = photo;
+        mPhoto = photo;
+        mImage = image;
         if (mView != null) {
             mView.updateView(image);
             mView.hideProgressBar();
@@ -59,7 +58,7 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
 
     @Override
     public void onLastPhotoNull() {
-        mLastPhoto = null;
+        mPhoto = null;
         if (mView != null)
             mView.hideProgressBar();
     }
@@ -97,9 +96,10 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
 
     @Override
     public void onImageClicked() {
-        if (mLastPhoto != null) {
+        if (mPhoto != null) {
             Intent intent = new Intent(mView.getContext(), PhotoDetailsActivity.class);
-            intent.putExtra(PHOTO_KEY, mLastPhoto.key);
+            intent.putExtra(PHOTO, (Parcelable) mPhoto);
+            intent.putExtra(IMAGE_URI, mImage);
             mView.startActivity(intent);
         }
     }
@@ -110,7 +110,7 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
             onPhotoCaptured(mView.getContext());
         }
         if (requestCode == REQUEST_PHOTO_SAVE)
-            //was removed just before starting PhotoSaveActivity
+            //was temporary removed just before starting PhotoSaveActivity
             mInteractor.addListenerForLastPhotoChanges(this, "admin");
     }
 
@@ -118,7 +118,7 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
         mService.addPhotoToGallery(mTempImageFile);
         Intent photoSaveIntent = new Intent(context, PhotoSaveActivity.class);
         photoSaveIntent.putExtra(TEMP_IMAGE_PATH, mTempImageFile.getAbsolutePath());
-        mView.startActivityForResult(photoSaveIntent,REQUEST_PHOTO_SAVE);
+        mView.startActivityForResult(photoSaveIntent, REQUEST_PHOTO_SAVE);
         //otherwise listener is trying to access image in storage before it's fully uploaded
         //we can't atomically save the photo in database and save image in storage
         mInteractor.removeListenerForLastPhotoChanges();

@@ -5,4 +5,6 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#00aa8d</color>
     <color name="colorAccentDark">#008975</color>
+    <color name="red">#b71c1c</color>
+    <color name="redDark">#7c1313</color>
 </resources>

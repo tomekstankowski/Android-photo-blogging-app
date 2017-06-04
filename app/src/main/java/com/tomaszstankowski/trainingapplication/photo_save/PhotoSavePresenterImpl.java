@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.model.Photo;
-import com.tomaszstankowski.trainingapplication.service.PhotoService;
+import com.tomaszstankowski.trainingapplication.utils.PhotoService;
 
 import java.io.File;
 
@@ -21,13 +21,9 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
     private static final String PHOTO = "PHOTO";
 
     private PhotoSaveView mView;
-    private PhotoSaveInteractor mInteractor;
+    private PhotoSaveInteractor mInteractor = new PhotoSaveInteractorImpl();
     private PhotoService mService;
     private Photo mPhoto;
-
-    public PhotoSavePresenterImpl() {
-        mInteractor = new PhotoSaveInteractorImpl();
-    }
 
     @Override
     public void onDestroyView(){
@@ -40,7 +36,7 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
         Activity activity = mView.getActivityContext();
         mService = new PhotoService(activity);
 
-        Photo photo = (Photo) activity.getIntent().getSerializableExtra(PHOTO);
+        Photo photo = activity.getIntent().getParcelableExtra(PHOTO);
         //null if photo has just been captured
         if (photo != null) {
             mPhoto = photo;

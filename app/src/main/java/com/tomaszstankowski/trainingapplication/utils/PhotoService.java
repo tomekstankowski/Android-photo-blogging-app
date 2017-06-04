@@ -1,4 +1,4 @@
-package com.tomaszstankowski.trainingapplication.service;
+package com.tomaszstankowski.trainingapplication.utils;
 
 import android.content.Context;
 import android.content.Intent;

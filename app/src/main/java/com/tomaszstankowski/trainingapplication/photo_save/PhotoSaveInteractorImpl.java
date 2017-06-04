@@ -7,13 +7,8 @@ import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
 
 public class PhotoSaveInteractorImpl implements PhotoSaveInteractor {
-    private DataBaseAccessor mDataAccessor;
-    private StorageAccessor mResourceAccessor;
-
-    public PhotoSaveInteractorImpl() {
-        mDataAccessor = new DataBaseAccessor();
-        mResourceAccessor = new StorageAccessor();
-    }
+    private DataBaseAccessor mDataAccessor = new DataBaseAccessor();
+    private StorageAccessor mResourceAccessor = new StorageAccessor();
 
     @Override
     public void editPhoto(Photo photo, OnPhotoSaveListener listener) {
