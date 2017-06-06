@@ -17,7 +17,10 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
+
+import javax.inject.Inject;
 
 /**
  * Activity starts after user captures photo or edits already existing one.
@@ -25,7 +28,9 @@ import com.tomaszstankowski.trainingapplication.R;
  */
 
 public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveView {
-    private PhotoSavePresenter mPresenter;
+    @Inject
+    PhotoSavePresenter mPresenter;
+
     private ProgressBar mProgressBar;
     private EditText mTitle;
     private EditText mDesc;
@@ -34,13 +39,12 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_save);
+        ((App) getApplication()).getMainComponent().inject(this);
         mProgressBar = (ProgressBar) findViewById(R.id.activity_photo_save_progressbar);
         mTitle = (EditText) findViewById(R.id.activity_photo_save_edittext_title);
         mDesc = (EditText) findViewById(R.id.activity_photo_save_edittext_desc);
         setBackButton();
         setSaveButton();
-        if (mPresenter == null)
-            mPresenter = new PhotoSavePresenterImpl();
         mPresenter.onCreateView(this);
     }
 

@@ -1,4 +1,4 @@
-package com.tomaszstankowski.trainingapplication.utils;
+package com.tomaszstankowski.trainingapplication.util;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,14 +17,14 @@ import id.zelory.compressor.Compressor;
  * Support class performing operations on image.
  */
 
-public class PhotoService {
+public class ImageManager {
     private Context mContext;
 
-    public PhotoService(Context context) {
+    public ImageManager(Context context) {
         mContext = context;
     }
 
-    public File createPhotoFile() throws IOException {
+    public File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -36,14 +36,14 @@ public class PhotoService {
         );
     }
 
-    public void addPhotoToGallery(File photoFile) {
+    public void addImageToSystemGallery(File photoFile) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         Uri contentUri = Uri.fromFile(photoFile);
         mediaScanIntent.setData(contentUri);
         mContext.sendBroadcast(mediaScanIntent);
     }
 
-    public Uri getUriFromFile(File file) {
+    public Uri getImageUriFromFile(File file) {
         if(file != null)
             return FileProvider.getUriForFile(mContext, "com.example.android.fileprovider", file);
         return null;
@@ -52,7 +52,7 @@ public class PhotoService {
     public Uri compressImage(String path) {
         File realImageFile = new File(path);
         File compressedImageFile = Compressor.getDefault(mContext).compressToFile(realImageFile);
-        //somehow the method getUriFromFile doesn't work in this case (although it is recommended)
+        //somehow the method getImageUriFromFile doesn't work in this case (although it is recommended)
         return Uri.fromFile(compressedImageFile);
     }
 

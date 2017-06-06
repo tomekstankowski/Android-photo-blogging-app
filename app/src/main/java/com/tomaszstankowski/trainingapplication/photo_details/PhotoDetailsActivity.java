@@ -11,13 +11,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
+
+import javax.inject.Inject;
 
 /**
  * Activity displaying photo.
  */
 
 public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDetailsView {
+    @Inject
+    PhotoDetailsPresenter mPresenter;
+
     private TextView mAuthorTv;
     private TextView mTitleTv;
     private TextView mDescTv;
@@ -27,12 +33,13 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     private SimpleDraweeView mImage;
     private ProgressBar mProgressBar;
 
-    private PhotoDetailsPresenter mPresenter;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_details);
+        ((App) getApplication()).getMainComponent().inject(this);
         mAuthorTv = (TextView) findViewById(R.id.activity_photo_details_textview_author);
         mTitleTv = (TextView) findViewById(R.id.activity_photo_details_textview_title);
         mDescTv = (TextView) findViewById(R.id.activity_photo_details_textview_desc);
@@ -43,8 +50,6 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
         mProgressBar = (ProgressBar) findViewById(R.id.activity_photo_details_progressbar);
         mEditBttn.setOnClickListener(view -> mPresenter.onEditButtonClicked());
         mRemoveBttn.setOnClickListener(view -> mPresenter.onRemoveButtonClicked());
-        if (mPresenter == null)
-            mPresenter = new PhotoDetailsPresenterImpl();
         mPresenter.onCreateView(this);
     }
 

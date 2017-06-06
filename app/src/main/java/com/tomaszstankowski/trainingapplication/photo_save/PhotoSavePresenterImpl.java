@@ -6,23 +6,34 @@ import android.os.AsyncTask;
 
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.model.Photo;
-import com.tomaszstankowski.trainingapplication.utils.PhotoService;
+import com.tomaszstankowski.trainingapplication.util.ImageManager;
 
 import java.io.File;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 
 /**
  * Presenter responding to PhotoSaveActivity calls
  */
-
+@Singleton
 public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInteractor.OnPhotoSaveListener {
+    @Inject
+    PhotoSaveInteractor mInteractor;
+
+    @Inject
+    ImageManager mManager;
+
+    @Inject
+    PhotoSavePresenterImpl() {
+    }
+
     private static final String TEMP_IMAGE_PATH = "TEMP_IMAGE_PATH";
     private static final String IMAGE_URI = "IMAGE_URI";
     private static final String PHOTO = "PHOTO";
 
     private PhotoSaveView mView;
-    private PhotoSaveInteractor mInteractor = new PhotoSaveInteractorImpl();
-    private PhotoService mService;
     private Photo mPhoto;
 
     @Override
@@ -34,8 +45,6 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
     public void onCreateView(PhotoSaveView view) {
         mView = view;
         Activity activity = mView.getActivityContext();
-        mService = new PhotoService(activity);
-
         Photo photo = activity.getIntent().getParcelableExtra(PHOTO);
         //null if photo has just been captured
         if (photo != null) {
@@ -46,7 +55,7 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
             //make sure previous photo not there
             mPhoto = null;
             String path = activity.getIntent().getStringExtra(TEMP_IMAGE_PATH);
-            Uri image = mService.getUriFromFile(new File(path));
+            Uri image = mManager.getImageUriFromFile(new File(path));
             mView.updateView(null, null, image, true);
         }
     }
@@ -61,7 +70,7 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
             new AsyncTask<String, Void, Uri>() {
                 @Override
                 protected Uri doInBackground(String... params) {
-                    return mService.compressImage(params[0]);
+                    return mManager.compressImage(params[0]);
                 }
 
                 @Override

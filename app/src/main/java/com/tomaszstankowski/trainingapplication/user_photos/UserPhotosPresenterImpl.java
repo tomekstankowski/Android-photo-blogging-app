@@ -14,12 +14,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosInteractor.OnUserPhotosChangesListener {
+    @Inject
+    UserPhotosInteractor mInteractor;
+
+    @Inject
+    UserPhotosPresenterImpl() {
+    }
+
     private static final String PHOTO = "PHOTO";
     private static final String IMAGE_URI = "IMAGE_URI";
 
     private UserPhotosView mView;
-    private UserPhotosInteractor mInteractor = new UserPhotosInteractorImpl();
     private List<Photo> mPhotos = new ArrayList<>();
     private Map<String, Uri> mImages = new HashMap<>();
 

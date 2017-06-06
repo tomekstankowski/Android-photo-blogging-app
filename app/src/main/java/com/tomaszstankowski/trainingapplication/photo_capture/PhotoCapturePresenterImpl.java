@@ -10,15 +10,28 @@ import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
-import com.tomaszstankowski.trainingapplication.utils.PhotoService;
+import com.tomaszstankowski.trainingapplication.util.ImageManager;
 
 import java.io.File;
 import java.io.IOException;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import static android.app.Activity.RESULT_OK;
 
-
+@Singleton
 public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCaptureInteractor.OnLastPhotoChangeListener {
+    @Inject
+    ImageManager mManager;
+
+    @Inject
+    PhotoCaptureInteractor mInteractor;
+
+    @Inject
+    PhotoCapturePresenterImpl() {
+    }
+
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_PHOTO_SAVE = 2;
     private static final String TEMP_IMAGE_PATH = "TEMP_IMAGE_PATH";
@@ -28,9 +41,7 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
     private Photo mPhoto;
     private Uri mImage;
     private File mTempImageFile;
-    private PhotoService mService;
     private PhotoCaptureView mView;
-    private PhotoCaptureInteractor mInteractor = new PhotoCaptureInteractorImpl();
 
     @Override
     public void onDestroyView(){
@@ -41,7 +52,6 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
     @Override
     public void onCreateView(PhotoCaptureView view) {
         mView = view;
-        mService = new PhotoService(mView.getContext());
         mView.showProgressBar();
         mInteractor.addListenerForLastPhotoChanges(this, "admin");
     }
@@ -76,14 +86,14 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
         mTempImageFile = null;
         Context context = mView.getContext();
         try {
-            mTempImageFile = mService.createPhotoFile();
+            mTempImageFile = mManager.createImageFile();
         }catch (IOException e){
             e.printStackTrace();
         }
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (mTempImageFile != null
                 && takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
-            Uri photoUri = mService.getUriFromFile(mTempImageFile);
+            Uri photoUri = mManager.getImageUriFromFile(mTempImageFile);
             if(photoUri != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
                 mView.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
@@ -115,7 +125,7 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
     }
 
     private void onPhotoCaptured(Context context) {
-        mService.addPhotoToGallery(mTempImageFile);
+        mManager.addImageToSystemGallery(mTempImageFile);
         Intent photoSaveIntent = new Intent(context, PhotoSaveActivity.class);
         photoSaveIntent.putExtra(TEMP_IMAGE_PATH, mTempImageFile.getAbsolutePath());
         mView.startActivityForResult(photoSaveIntent, REQUEST_PHOTO_SAVE);

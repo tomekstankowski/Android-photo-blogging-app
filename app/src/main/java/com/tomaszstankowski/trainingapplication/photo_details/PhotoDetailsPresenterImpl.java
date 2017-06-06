@@ -9,12 +9,24 @@ import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
         PhotoDetailsInteractor.OnPhotoChangeListener, PhotoDetailsInteractor.OnPhotoRemoveListener {
-    private PhotoDetailsView mView;
-    private PhotoDetailsInteractor mInteractor = new PhotoDetailsInteractorImpl();
+
+    @Inject
+    PhotoDetailsInteractor mInteractor;
+
+    @Inject
+    PhotoDetailsPresenterImpl() {
+    }
+
     private static final String PHOTO = "PHOTO";
     private static final String IMAGE_URI = "IMAGE_URI";
+
+    private PhotoDetailsView mView;
     private Photo mPhoto;
     private Uri mImage;
 

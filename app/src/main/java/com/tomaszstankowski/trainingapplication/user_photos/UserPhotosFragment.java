@@ -10,15 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.ui.GalleryViewAdapter;
+
+import javax.inject.Inject;
 
 /**
  * Fragment showing all photos of the given user.
  */
 
 public class UserPhotosFragment extends Fragment implements UserPhotosView, GalleryViewAdapter.OnItemClickListener {
-    private UserPhotosPresenter mPresenter;
+    @Inject
+    UserPhotosPresenter mPresenter;
+
     private RecyclerView mRecyclerView;
     private GalleryViewAdapter mAdapter;
     private ProgressBar mProgressBar;
@@ -26,8 +31,7 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mPresenter == null)
-            mPresenter = new UserPhotosPresenterImpl();
+        ((App) getActivity().getApplication()).getMainComponent().inject(this);
     }
 
     @Override

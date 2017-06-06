@@ -21,14 +21,19 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
+
+import javax.inject.Inject;
 
 /**
  * Fragment allowing to quickly capture photo and then save it.
  */
 
 public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
-    private PhotoCapturePresenter mPresenter;
+    @Inject
+    PhotoCapturePresenter mPresenter;
+
     private ProgressBar mProgressBar;
     private Button mCaptureButton;
     private SimpleDraweeView mImage;
@@ -36,8 +41,7 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        if(mPresenter == null)
-            mPresenter = new PhotoCapturePresenterImpl();
+        ((App) getActivity().getApplication()).getMainComponent().inject(this);
     }
 
     @Override

@@ -7,8 +7,18 @@ import com.google.firebase.database.ValueEventListener;
 import com.tomaszstankowski.trainingapplication.model.DataBaseAccessor;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor {
-    private DataBaseAccessor mDataAccessor = new DataBaseAccessor();
+    @Inject
+    DataBaseAccessor mDataAccessor;
+
+    @Inject
+    PhotoDetailsInteractorImpl() {
+    }
+
     private DatabaseReference mRef;
     private ValueEventListener mListener;
 

@@ -9,10 +9,20 @@ import com.tomaszstankowski.trainingapplication.model.DataBaseAccessor;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class UserPhotosInteractorImpl implements UserPhotosInteractor {
-    private DataBaseAccessor mDataAccessor = new DataBaseAccessor();
-    private StorageAccessor mResourceAccessor = new StorageAccessor();
+    @Inject
+    DataBaseAccessor mDataAccessor;
+    @Inject
+    StorageAccessor mStorageAccessor;
+
+    @Inject
+    UserPhotosInteractorImpl() {
+    }
+
     private DatabaseReference mRef;
     private ChildEventListener mListener;
 
@@ -28,7 +38,7 @@ public class UserPhotosInteractorImpl implements UserPhotosInteractor {
                         Photo photo = dataSnapshot.getValue(Photo.class);
                         if (photo != null) {
                             photo.key = key;
-                            mResourceAccessor.getImageUri(photo)
+                            mStorageAccessor.getImageUri(photo)
                                     .addOnSuccessListener(uri -> listener.onPhotoAdded(photo, uri));
                         }
                     }
