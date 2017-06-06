@@ -22,6 +22,10 @@ import com.tomaszstankowski.trainingapplication.R;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Activity starts after user captures photo or edits already existing one.
  * He can set title and desc and save photo.
@@ -31,20 +35,37 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
     @Inject
     PhotoSavePresenter mPresenter;
 
-    private ProgressBar mProgressBar;
-    private EditText mTitle;
-    private EditText mDesc;
+    @BindView(R.id.activity_photo_save_progressbar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.activity_photo_save_edittext_title)
+    EditText mTitle;
+    @BindView(R.id.activity_photo_save_edittext_desc)
+    EditText mDesc;
+    @BindView(R.id.activity_photo_save_imageview_photo)
+    SimpleDraweeView mImage;
+    @BindView(R.id.activity_photo_save_button_back)
+    Button mBackButton;
+    @BindView(R.id.activity_photo_save_button_save)
+    Button mSaveButton;
+
+    @OnClick(R.id.activity_photo_save_button_back)
+    public void onBackButtonClicked() {
+        mPresenter.onBackButtonClicked();
+    }
+
+    @OnClick(R.id.activity_photo_save_button_save)
+    public void onSaveButtonClicked() {
+        String title = mTitle.getText().toString();
+        String desc = mDesc.getText().toString();
+        mPresenter.onSaveButtonClicked(title, desc);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_save);
+        ButterKnife.bind(this);
         ((App) getApplication()).getMainComponent().inject(this);
-        mProgressBar = (ProgressBar) findViewById(R.id.activity_photo_save_progressbar);
-        mTitle = (EditText) findViewById(R.id.activity_photo_save_edittext_title);
-        mDesc = (EditText) findViewById(R.id.activity_photo_save_edittext_desc);
-        setBackButton();
-        setSaveButton();
         mPresenter.onCreateView(this);
     }
 
@@ -69,33 +90,18 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
     }
 
     private void setImage(Uri uri, boolean resize) {
-        SimpleDraweeView photoView = (SimpleDraweeView) findViewById(R.id.activity_photo_save_imageview_photo);
         if (resize) {
             int width = 50, height = 50;
             ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
                     .setResizeOptions(new ResizeOptions(width, height))
                     .build();
             DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setOldController(photoView.getController())
+                    .setOldController(mImage.getController())
                     .setImageRequest(request)
                     .build();
-            photoView.setController(controller);
+            mImage.setController(controller);
         } else
-            photoView.setImageURI(uri);
-    }
-
-    private void setBackButton() {
-        Button button = (Button) findViewById(R.id.activity_photo_save_button_back);
-        button.setOnClickListener(view -> mPresenter.onBackButtonClicked());
-    }
-
-    private void setSaveButton() {
-        Button button = (Button) findViewById(R.id.activity_photo_save_button_save);
-        button.setOnClickListener(view -> {
-            String title = mTitle.getText().toString();
-            String desc = mDesc.getText().toString();
-            mPresenter.onSaveButtonClicked(title, desc);
-        });
+            mImage.setImageURI(uri);
     }
 
     @Override

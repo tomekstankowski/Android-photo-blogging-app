@@ -16,6 +16,10 @@ import com.tomaszstankowski.trainingapplication.R;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * Activity displaying photo.
  */
@@ -24,32 +28,39 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     @Inject
     PhotoDetailsPresenter mPresenter;
 
-    private TextView mAuthorTv;
-    private TextView mTitleTv;
-    private TextView mDescTv;
-    private TextView mDateTv;
-    private Button mEditBttn;
-    private Button mRemoveBttn;
-    private SimpleDraweeView mImage;
-    private ProgressBar mProgressBar;
+    @BindView(R.id.activity_photo_details_textview_author)
+    TextView mAuthorTv;
+    @BindView(R.id.activity_photo_details_textview_title)
+    TextView mTitleTv;
+    @BindView(R.id.activity_photo_details_textview_desc)
+    TextView mDescTv;
+    @BindView(R.id.activity_photo_details_textview_date)
+    TextView mDateTv;
+    @BindView(R.id.activity_photo_details_button_edit)
+    Button mEditBttn;
+    @BindView(R.id.activity_photo_details_button_remove)
+    Button mRemoveBttn;
+    @BindView(R.id.activity_photo_details_image)
+    SimpleDraweeView mImage;
+    @BindView(R.id.activity_photo_details_progressbar)
+    ProgressBar mProgressBar;
 
+    @OnClick(R.id.activity_photo_details_button_edit)
+    public void onEditButtonClicked() {
+        mPresenter.onEditButtonClicked();
+    }
 
+    @OnClick(R.id.activity_photo_details_button_remove)
+    public void onRemoveButtonClicked() {
+        mPresenter.onRemoveButtonClicked();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_details);
+        ButterKnife.bind(this);
         ((App) getApplication()).getMainComponent().inject(this);
-        mAuthorTv = (TextView) findViewById(R.id.activity_photo_details_textview_author);
-        mTitleTv = (TextView) findViewById(R.id.activity_photo_details_textview_title);
-        mDescTv = (TextView) findViewById(R.id.activity_photo_details_textview_desc);
-        mDateTv = (TextView) findViewById(R.id.activity_photo_details_textview_date);
-        mEditBttn = (Button) findViewById(R.id.activity_photo_details_button_edit);
-        mRemoveBttn = (Button) findViewById(R.id.activity_photo_details_button_remove);
-        mImage = (SimpleDraweeView) findViewById(R.id.activity_photo_details_image);
-        mProgressBar = (ProgressBar) findViewById(R.id.activity_photo_details_progressbar);
-        mEditBttn.setOnClickListener(view -> mPresenter.onEditButtonClicked());
-        mRemoveBttn.setOnClickListener(view -> mPresenter.onRemoveButtonClicked());
         mPresenter.onCreateView(this);
     }
 

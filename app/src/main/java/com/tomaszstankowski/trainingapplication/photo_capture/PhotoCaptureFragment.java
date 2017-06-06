@@ -26,6 +26,11 @@ import com.tomaszstankowski.trainingapplication.R;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Unbinder;
+
 /**
  * Fragment allowing to quickly capture photo and then save it.
  */
@@ -34,12 +39,29 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
     @Inject
     PhotoCapturePresenter mPresenter;
 
-    private ProgressBar mProgressBar;
-    private Button mCaptureButton;
-    private SimpleDraweeView mImage;
+    @BindView(R.id.fragment_photo_capture_progressbar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.fragment_photo_capture_button)
+    Button mCaptureButton;
+    @BindView(R.id.fragment_photo_capture_imageview_last_photo)
+    SimpleDraweeView mImage;
+    @BindView(R.id.fragment_photo_capture_textview_lastphoto)
+    TextView mLabel;
+
+    @OnClick(R.id.fragment_photo_capture_button)
+    public void onCaptureButtonClicked() {
+        mPresenter.onCaptureButtonClicked();
+    }
+
+    @OnClick(R.id.fragment_photo_capture_imageview_last_photo)
+    public void onImageClicked() {
+        mPresenter.onImageClicked();
+    }
+
+    private Unbinder mUnbinder;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((App) getActivity().getApplication()).getMainComponent().inject(this);
     }
@@ -47,17 +69,14 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_photo_capture, container, false);
+        View v = inflater.inflate(R.layout.fragment_photo_capture, container, false);
+        mUnbinder = ButterKnife.bind(this, v);
+        return v;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mProgressBar = (ProgressBar) getActivity().findViewById(R.id.fragment_photo_capture_progressbar);
-        mCaptureButton = (Button) getActivity().findViewById(R.id.fragment_photo_capture_button);
-        mCaptureButton.setOnClickListener(view -> mPresenter.onCaptureButtonClicked());
-        mImage = (SimpleDraweeView) getActivity().findViewById(R.id.fragment_photo_capture_imageview_last_photo);
-        mImage.setOnClickListener(view -> mPresenter.onImageClicked());
         mPresenter.onCreateView(this);
     }
 
@@ -71,6 +90,7 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
     public void onDestroyView() {
         mPresenter.onDestroyView();
         super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -79,12 +99,12 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
     }
 
     @Override
-    public void showProgressBar(){
+    public void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void hideProgressBar(){
+    public void hideProgressBar() {
         mProgressBar.setVisibility(View.GONE);
     }
 
@@ -93,8 +113,7 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
      */
     @Override
     public void updateView(Uri imageUri) {
-        TextView label = (TextView)getActivity().findViewById(R.id.fragment_photo_capture_textview_lastphoto);
-        label.setVisibility(View.VISIBLE);
+        mLabel.setVisibility(View.VISIBLE);
         mImage.setVisibility(View.VISIBLE);
         int width = 50, height = 50;
         ImageRequest request = ImageRequestBuilder.newBuilderWithSource(imageUri)

@@ -1,4 +1,5 @@
-## Sample App  MVP, dagger2, firebase.
+# Sample App
+## MVP, dagger2, firebase, Butterknife, Fresco.
 
 Application  will allow user to take a photo through the
 app, add some information about it and save data in 

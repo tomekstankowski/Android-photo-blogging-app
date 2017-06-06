@@ -9,6 +9,9 @@ import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragment;
 import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosFragment;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Entry point for initializing other Views(fragments)
  */
@@ -16,14 +19,19 @@ import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosFragment;
 public class MainActivity extends AppCompatActivity implements MainView {
     private final static String PHOTO_CAPTURE_FRAGMENT_TAG = "PHOTO_CAPTURE_FRAGMENT";
     private final static String USER_PHOTOS_FRAGMENT_TAG = "USER_PHOTOS_FRAGMENT";
+
     private PhotoCaptureFragment mPhotoCaptureFragment;
     private UserPhotosFragment mUserPhotosFragment;
     private MainPresenter mPresenter;
+
+    @BindView(R.id.activity_main_bottom_navigation)
+    BottomNavigationView mNavigationBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         if(mPresenter == null)
             mPresenter = new MainPresenterImpl(this);
         //fragment that shows up after launch
@@ -49,8 +57,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
      * Called in onCreate().
      */
     private void setBottomNavigation(){
-        BottomNavigationView bar = (BottomNavigationView)findViewById(R.id.activity_main_bottom_navigation);
-        bar.setOnNavigationItemSelectedListener(item -> {
+        mNavigationBar.setOnNavigationItemSelectedListener(item -> {
             FragmentManager fragmentManager = getSupportFragmentManager();
             switch (item.getItemId()){
                 case R.id.activity_main_menu_home:

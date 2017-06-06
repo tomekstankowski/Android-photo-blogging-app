@@ -16,6 +16,10 @@ import com.tomaszstankowski.trainingapplication.ui.GalleryViewAdapter;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 /**
  * Fragment showing all photos of the given user.
  */
@@ -24,9 +28,13 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     @Inject
     UserPhotosPresenter mPresenter;
 
-    private RecyclerView mRecyclerView;
+    @BindView(R.id.fragment_user_photos_recyclerview)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.fragment_user_photos_progressbar)
+    ProgressBar mProgressBar;
+
     private GalleryViewAdapter mAdapter;
-    private ProgressBar mProgressBar;
+    private Unbinder mUnbinder;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,14 +45,14 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user_photos, container, false);
+        View v = inflater.inflate(R.layout.fragment_user_photos, container, false);
+        mUnbinder = ButterKnife.bind(this, v);
+        return v;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mProgressBar = (ProgressBar) getActivity().findViewById(R.id.fragment_user_photos_progressbar);
-        mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.fragment_user_photos_gallery);
         int numberOfColumns = 3;
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), numberOfColumns));
         mAdapter = new GalleryViewAdapter(getActivity());
@@ -57,6 +65,7 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     public void onDestroyView() {
         mPresenter.onDestroyView();
         super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
