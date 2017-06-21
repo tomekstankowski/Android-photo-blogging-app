@@ -9,6 +9,7 @@ import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -64,8 +65,12 @@ public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosI
         if (!mImages.containsKey(photo.key)) {
             mPhotos.add(photo);
             mImages.put(photo.key, image);
-            if (mView != null)
-                mView.addPhoto(image);
+            Collections.sort(mPhotos, (p1, p2) -> p1.date.compareTo(p2.date));
+            if (mView != null) {
+                mView.removeAllPhotos();
+                for (Photo p : mPhotos)
+                    mView.addPhoto(mImages.get(p.key));
+            }
         }
     }
 

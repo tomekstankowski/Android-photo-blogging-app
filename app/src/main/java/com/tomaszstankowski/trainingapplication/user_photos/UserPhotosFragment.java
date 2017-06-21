@@ -84,6 +84,11 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     }
 
     @Override
+    public void removeAllPhotos() {
+        mAdapter.removeAllItems();
+    }
+
+    @Override
     public void showProgressBar() {
         mProgressBar.setVisibility(View.VISIBLE);
     }

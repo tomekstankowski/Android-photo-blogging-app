@@ -47,6 +47,11 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
         notifyItemInserted(mImages.size() - 1);
     }
 
+    public void removeAllItems() {
+        mImages.clear();
+        notifyDataSetChanged();
+    }
+
     public void removeItem(int position) {
         mImages.remove(position);
         notifyItemRemoved(position);

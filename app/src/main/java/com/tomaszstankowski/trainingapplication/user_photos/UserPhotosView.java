@@ -13,6 +13,8 @@ public interface UserPhotosView {
 
     void removePhoto(int position);
 
+    void removeAllPhotos();
+
     void startActivity(Intent intent);
 
     Context getContext();
