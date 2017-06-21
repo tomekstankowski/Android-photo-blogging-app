@@ -11,47 +11,48 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor {
-    @Inject
-    DataBaseAccessor mDataAccessor;
+public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor, ValueEventListener {
+    private DataBaseAccessor mDataAccessor;
 
     @Inject
-    PhotoDetailsInteractorImpl() {
+    PhotoDetailsInteractorImpl(DataBaseAccessor dataBaseAccessor) {
+        mDataAccessor = dataBaseAccessor;
     }
 
-    private DatabaseReference mRef;
-    private ValueEventListener mListener;
+    private DatabaseReference mPhotoRef;
+    private OnPhotoChangeListener mListener;
 
     @Override
-    public void addListenerForPhotoChanges(String key, OnPhotoChangeListener listener) {
-        mListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Photo photo = dataSnapshot.getValue(Photo.class);
-                if (photo != null) {
-                    photo.key = key;
-                    listener.onPhotoChange(photo);
-                } else
-                    listener.onPhotoFetchError();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                listener.onPhotoFetchError();
-            }
-        };
-        mRef = mDataAccessor.getPhoto(key, mListener);
+    public void observePhoto(String key, OnPhotoChangeListener listener) {
+        mListener = listener;
+        mPhotoRef = mDataAccessor.getPhoto(key);
+        mPhotoRef.addValueEventListener(this);
     }
 
     @Override
-    public void removeListenerForPhotoChanges() {
-        if (mRef != null)
-            mRef.removeEventListener(mListener);
+    public void stopObservingPhoto() {
+        if (mPhotoRef != null)
+            mPhotoRef.removeEventListener(this);
     }
 
     @Override
     public void removePhoto(Photo photo, OnPhotoRemoveListener listener) {
         mDataAccessor.removePhoto(photo).addOnSuccessListener(aVoid -> listener.onPhotoRemoveSuccess())
                 .addOnFailureListener(e -> listener.onPhotoRemoveFailure());
+    }
+
+    @Override
+    public void onDataChange(DataSnapshot dataSnapshot) {
+        Photo photo = dataSnapshot.getValue(Photo.class);
+        if (photo != null) {
+            photo.key = dataSnapshot.getKey();
+            mListener.onPhotoChange(photo);
+        } else
+            mListener.onPhotoFetchError();
+    }
+
+    @Override
+    public void onCancelled(DatabaseError databaseError) {
+        mListener.onPhotoFetchError();
     }
 }

@@ -12,12 +12,12 @@ public interface PhotoCaptureInteractor {
     interface OnLastPhotoChangeListener {
         void onLastPhotoChanged(Photo photo, Uri imageUri);
 
-        void onLastPhotoNull();
+        void onLastPhotoRemoved();
 
         void onLastPhotoFetchError();
     }
 
-    void addListenerForLastPhotoChanges(OnLastPhotoChangeListener listener, String userKey);
+    void observeUserLastPhoto(OnLastPhotoChangeListener listener);
 
-    void removeListenerForLastPhotoChanges();
+    void stopObservingUserLastPhoto();
 }

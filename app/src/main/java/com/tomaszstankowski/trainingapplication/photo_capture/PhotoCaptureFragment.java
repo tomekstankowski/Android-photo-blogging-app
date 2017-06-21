@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +38,6 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
     @Inject
     PhotoCapturePresenter mPresenter;
 
-    @BindView(R.id.fragment_photo_capture_progressbar)
-    ProgressBar mProgressBar;
     @BindView(R.id.fragment_photo_capture_button)
     Button mCaptureButton;
     @BindView(R.id.fragment_photo_capture_imageview_last_photo)
@@ -98,16 +95,6 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
         Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void showProgressBar() {
-        mProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideProgressBar() {
-        mProgressBar.setVisibility(View.GONE);
-    }
-
     /**
      * Called when user successfully saved a photo or in onCreate() if last photo exists
      */
@@ -125,6 +112,12 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
                 .build();
         mImage.setController(controller);
         mImage.setImageURI(imageUri);
+    }
+
+    @Override
+    public void clearView() {
+        mLabel.setVisibility(View.GONE);
+        mImage.setVisibility(View.GONE);
     }
 
     /**

@@ -18,9 +18,9 @@ public interface PhotoDetailsInteractor {
         void onPhotoRemoveFailure();
     }
 
-    void addListenerForPhotoChanges(String key, OnPhotoChangeListener listener);
+    void observePhoto(String key, OnPhotoChangeListener listener);
 
-    void removeListenerForPhotoChanges();
+    void stopObservingPhoto();
 
     void removePhoto(Photo photo, OnPhotoRemoveListener listener);
 }

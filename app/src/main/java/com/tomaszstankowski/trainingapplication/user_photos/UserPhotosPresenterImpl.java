@@ -20,33 +20,31 @@ import javax.inject.Singleton;
 
 @Singleton
 public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosInteractor.OnUserPhotosChangesListener {
-    @Inject
-    UserPhotosInteractor mInteractor;
-
-    @Inject
-    UserPhotosPresenterImpl() {
-    }
-
     private static final String PHOTO = "PHOTO";
     private static final String IMAGE_URI = "IMAGE_URI";
 
     private UserPhotosView mView;
+    private UserPhotosInteractor mInteractor;
     private List<Photo> mPhotos = new ArrayList<>();
     private Map<String, Uri> mImages = new HashMap<>();
+
+    @Inject
+    UserPhotosPresenterImpl(UserPhotosInteractor interactor) {
+        mInteractor = interactor;
+    }
 
     @Override
     public void onCreateView(UserPhotosView view) {
         mView = view;
-        mInteractor.addListenerForUserPhotosChanges(this);
-        for (Photo p : mPhotos) {
-            mView.addPhoto(mImages.get(p.key));
-        }
+        mInteractor.observeUserPhotos(this);
     }
 
     @Override
     public void onDestroyView() {
         mView = null;
-        mInteractor.removeListenerForUserPhotosChanges();
+        mInteractor.stopObservingUserPhotos();
+        mImages.clear();
+        mPhotos.clear();
     }
 
     @Override
@@ -61,26 +59,26 @@ public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosI
 
     @Override
     public void onPhotoAdded(Photo photo, Uri image) {
-        //when activity was destroyed and now is recreated, there might be this photo saved
-        if (!mImages.containsKey(photo.key)) {
-            mPhotos.add(photo);
-            mImages.put(photo.key, image);
-            Collections.sort(mPhotos, (p1, p2) -> p1.date.compareTo(p2.date));
-            if (mView != null) {
-                mView.removeAllPhotos();
-                for (Photo p : mPhotos)
-                    mView.addPhoto(mImages.get(p.key));
-            }
+        if (mImages.containsKey(photo.key))
+            return;
+        mPhotos.add(photo);
+        mImages.put(photo.key, image);
+        Collections.sort(mPhotos, (p1, p2) -> p1.date.compareTo(p2.date));
+        if (mView != null) {
+            mView.removeAllPhotos();
+            for (Photo p : mPhotos)
+                mView.addPhoto(mImages.get(p.key));
         }
     }
 
     @Override
-    public void onPhotoRemoved(String key) {
+    public void onPhotoRemoved(String photoKey) {
         int position;
         Iterator<Photo> iterator = mPhotos.iterator();
         while (iterator.hasNext()) {
             Photo photo = iterator.next();
-            if (photo.key.equals(key)) {
+            if (photo.key.equals(photoKey)) {
+                mImages.remove(photoKey);
                 position = mPhotos.indexOf(photo);
                 if (mView != null)
                     mView.removePhoto(position);

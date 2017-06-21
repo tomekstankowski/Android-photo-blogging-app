@@ -19,26 +19,19 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInteractor.OnPhotoSaveListener {
-    @Inject
-    PhotoSaveInteractor mInteractor;
-
-    @Inject
-    ImageManager mManager;
-
-    @Inject
-    PhotoSavePresenterImpl() {
-    }
-
     private static final String TEMP_IMAGE_PATH = "TEMP_IMAGE_PATH";
     private static final String IMAGE_URI = "IMAGE_URI";
     private static final String PHOTO = "PHOTO";
 
+    private PhotoSaveInteractor mInteractor;
+    private ImageManager mManager;
     private PhotoSaveView mView;
     private Photo mPhoto;
 
-    @Override
-    public void onDestroyView(){
-        mView = null;
+    @Inject
+    PhotoSavePresenterImpl(PhotoSaveInteractor interactor, ImageManager manager) {
+        mInteractor = interactor;
+        mManager = manager;
     }
 
     @Override
@@ -58,6 +51,11 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
             Uri image = mManager.getImageUriFromFile(new File(path));
             mView.updateView(null, null, image, true);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        mView = null;
     }
 
     @Override

@@ -10,25 +10,26 @@ import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Singleton
 public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
         PhotoDetailsInteractor.OnPhotoChangeListener, PhotoDetailsInteractor.OnPhotoRemoveListener {
-
-    @Inject
-    PhotoDetailsInteractor mInteractor;
-
-    @Inject
-    PhotoDetailsPresenterImpl() {
-    }
-
     private static final String PHOTO = "PHOTO";
     private static final String IMAGE_URI = "IMAGE_URI";
 
+    private PhotoDetailsInteractor mInteractor;
+    private String mUserKey;
     private PhotoDetailsView mView;
     private Photo mPhoto;
     private Uri mImage;
+
+    @Inject
+    PhotoDetailsPresenterImpl(PhotoDetailsInteractor interactor, @Named("userKey") String userKey) {
+        mInteractor = interactor;
+        mUserKey = userKey;
+    }
 
     @Override
     public void onCreateView(PhotoDetailsView view) {
@@ -36,22 +37,22 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
         Intent intent = mView.getActivityContext().getIntent();
         mPhoto = intent.getParcelableExtra(PHOTO);
         mImage = intent.getParcelableExtra(IMAGE_URI);
-        mInteractor.addListenerForPhotoChanges(mPhoto.key, this);
-        boolean isPermitted = mPhoto.userKey.equals("admin");
-        mView.updateView(mPhoto.title, "admin", mPhoto.desc, mPhoto.getDate(), mImage, isPermitted);
+        mInteractor.observePhoto(mPhoto.key, this);
+        onPhotoChange(mPhoto);
     }
 
     @Override
     public void onDestroyView() {
         mView = null;
-        mInteractor.removeListenerForPhotoChanges();
+        mInteractor.stopObservingPhoto();
     }
 
     @Override
     public void onPhotoChange(Photo photo) {
         mPhoto = photo;
         if (mView != null) {
-            mView.updateView(photo.title, "admin", photo.desc, photo.getDate(), mImage, photo.userKey.equals("admin"));
+            mView.updateView(photo.title, "admin", photo.desc, photo.getDate(), mImage,
+                    photo.userKey.equals(mUserKey));
         }
     }
 

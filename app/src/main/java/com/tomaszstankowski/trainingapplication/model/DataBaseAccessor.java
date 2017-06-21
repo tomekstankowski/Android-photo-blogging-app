@@ -2,10 +2,9 @@ package com.tomaszstankowski.trainingapplication.model;
 
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.Query;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,6 @@ public class DataBaseAccessor {
         photo.key = key;
         Map<String, Object> data = new HashMap<>();
         data.put("users/" + photo.userKey + "/photos/" + key, true);
-        data.put("users/" + photo.userKey + "/lastPhoto", key);
         data.put("photos/" + key, photo);
         return mDatabase.getReference().updateChildren(data);
     }
@@ -37,25 +35,15 @@ public class DataBaseAccessor {
         return mDatabase.getReference("photos").child(photo.key).setValue(photo);
     }
 
-    public void getPhotoOnce(String key, ValueEventListener listener) {
-        mDatabase.getReference("photos").child(key).addListenerForSingleValueEvent(listener);
+    public DatabaseReference getPhoto(String key) {
+        return mDatabase.getReference("photos").child(key);
     }
 
-    public DatabaseReference getPhoto(String key, ValueEventListener listener) {
-        DatabaseReference ref = mDatabase.getReference("photos").child(key);
-        ref.addValueEventListener(listener);
-        return ref;
+    public Query getUserLastPhoto(String userKey) {
+        return mDatabase.getReference("users").child(userKey).child("photos").orderByKey().limitToLast(1);
     }
 
-    public DatabaseReference getUserLastPhoto(ValueEventListener listener, String userKey) {
-        DatabaseReference ref = mDatabase.getReference("users").child(userKey).child("lastPhoto");
-        ref.addValueEventListener(listener);
-        return ref;
-    }
-
-    public DatabaseReference getUserPhotos(ChildEventListener listener, String userKey) {
-        DatabaseReference ref = mDatabase.getReference("users").child(userKey).child("photos");
-        ref.addChildEventListener(listener);
-        return ref;
+    public Query getUserPhotos(String userKey) {
+        return mDatabase.getReference("users").child(userKey).child("photos").orderByKey();
     }
 }

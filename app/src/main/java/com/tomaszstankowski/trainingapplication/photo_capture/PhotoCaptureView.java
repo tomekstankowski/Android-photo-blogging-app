@@ -17,9 +17,7 @@ public interface PhotoCaptureView{
 
     void showMessage(String message);
 
-    void showProgressBar();
-
-    void hideProgressBar();
-
     void updateView(Uri imageUri);
+
+    void clearView();
 }

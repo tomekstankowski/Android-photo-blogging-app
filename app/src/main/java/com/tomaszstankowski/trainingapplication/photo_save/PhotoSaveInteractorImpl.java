@@ -11,14 +11,13 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PhotoSaveInteractorImpl implements PhotoSaveInteractor {
-    @Inject
-    DataBaseAccessor mDataAccessor;
+    private DataBaseAccessor mDataAccessor;
+    private StorageAccessor mStorageAccessor;
 
     @Inject
-    StorageAccessor mStorageAccessor;
-
-    @Inject
-    PhotoSaveInteractorImpl() {
+    PhotoSaveInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor) {
+        mDataAccessor = dataBaseAccessor;
+        mStorageAccessor = storageAccessor;
     }
 
     @Override

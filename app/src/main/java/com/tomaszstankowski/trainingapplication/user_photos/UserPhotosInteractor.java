@@ -12,10 +12,10 @@ public interface UserPhotosInteractor {
     interface OnUserPhotosChangesListener {
         void onPhotoAdded(Photo photo, Uri image);
 
-        void onPhotoRemoved(String key);
+        void onPhotoRemoved(String photoKey);
     }
 
-    void addListenerForUserPhotosChanges(OnUserPhotosChangesListener listener);
+    void observeUserPhotos(OnUserPhotosChangesListener listener);
 
-    void removeListenerForUserPhotosChanges();
+    void stopObservingUserPhotos();
 }

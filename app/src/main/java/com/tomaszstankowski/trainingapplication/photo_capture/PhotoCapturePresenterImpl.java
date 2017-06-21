@@ -22,38 +22,35 @@ import static android.app.Activity.RESULT_OK;
 
 @Singleton
 public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCaptureInteractor.OnLastPhotoChangeListener {
-    @Inject
-    ImageManager mManager;
-
-    @Inject
-    PhotoCaptureInteractor mInteractor;
-
-    @Inject
-    PhotoCapturePresenterImpl() {
-    }
-
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_PHOTO_SAVE = 2;
     private static final String TEMP_IMAGE_PATH = "TEMP_IMAGE_PATH";
     private static final String PHOTO = "PHOTO";
     private static final String IMAGE_URI = "IMAGE_URI";
 
+    private ImageManager mManager;
+    private PhotoCaptureInteractor mInteractor;
     private Photo mPhoto;
     private Uri mImage;
     private File mTempImageFile;
     private PhotoCaptureView mView;
 
+    @Inject
+    PhotoCapturePresenterImpl(PhotoCaptureInteractor interactor, ImageManager manager) {
+        mInteractor = interactor;
+        mManager = manager;
+    }
+
     @Override
     public void onDestroyView(){
         mView = null;
-        mInteractor.removeListenerForLastPhotoChanges();
+        mInteractor.stopObservingUserLastPhoto();
     }
 
     @Override
     public void onCreateView(PhotoCaptureView view) {
         mView = view;
-        mView.showProgressBar();
-        mInteractor.addListenerForLastPhotoChanges(this, "admin");
+        mInteractor.observeUserLastPhoto(this);
     }
 
     @Override
@@ -62,22 +59,21 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
         mImage = image;
         if (mView != null) {
             mView.updateView(image);
-            mView.hideProgressBar();
         }
     }
 
     @Override
-    public void onLastPhotoNull() {
+    public void onLastPhotoRemoved() {
         mPhoto = null;
-        if (mView != null)
-            mView.hideProgressBar();
+        mImage = null;
+        if (mView != null) {
+            mView.clearView();
+        }
     }
-
     @Override
     public void onLastPhotoFetchError() {
         if (mView != null) {
             mView.showMessage(mView.getContext().getString(R.string.load_error));
-            mView.hideProgressBar();
         }
     }
 
@@ -121,7 +117,7 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
         }
         if (requestCode == REQUEST_PHOTO_SAVE)
             //was temporary removed just before starting PhotoSaveActivity
-            mInteractor.addListenerForLastPhotoChanges(this, "admin");
+            mInteractor.observeUserLastPhoto(this);
     }
 
     private void onPhotoCaptured(Context context) {
@@ -131,6 +127,6 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
         mView.startActivityForResult(photoSaveIntent, REQUEST_PHOTO_SAVE);
         //otherwise listener is trying to access image in storage before it's fully uploaded
         //we can't atomically save the photo in database and save image in storage
-        mInteractor.removeListenerForLastPhotoChanges();
+        mInteractor.stopObservingUserLastPhoto();
     }
 }

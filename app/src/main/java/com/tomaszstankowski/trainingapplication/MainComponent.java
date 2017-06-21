@@ -15,7 +15,8 @@ import dagger.Component;
         ModelModule.class,
         PresenterModule.class,
         InteractorModule.class,
-        UtilModule.class})
+        UtilModule.class,
+        LoginModule.class})
 public interface MainComponent {
     void inject(PhotoCaptureFragment fragment);
 
