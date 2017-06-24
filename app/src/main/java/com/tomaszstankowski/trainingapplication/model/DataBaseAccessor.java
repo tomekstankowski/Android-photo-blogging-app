@@ -9,11 +9,17 @@ import com.google.firebase.database.Query;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 /**
  * Class accessing Firebase Database.
  */
 public class DataBaseAccessor {
     private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+    @Inject
+    public DataBaseAccessor() {
+    }
 
     public Task<Void> savePhoto(Photo photo) {
         String key = mDatabase.getReference("photos").push().getKey();

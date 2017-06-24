@@ -96,7 +96,7 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
     }
 
     /**
-     * Called when user successfully saved a photo or in onCreate() if last photo exists
+     * Called when user successfully saved a photo or in onCreateView() if last photo exists
      */
     @Override
     public void updateView(Uri imageUri) {

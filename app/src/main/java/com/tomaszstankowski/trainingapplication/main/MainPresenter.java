@@ -5,5 +5,10 @@ package com.tomaszstankowski.trainingapplication.main;
  */
 
 public interface MainPresenter {
+
+    void onCreateView(MainView view);
+
+    void onStartView();
+
     void onDestroy();
 }

@@ -25,6 +25,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".login.LoginActivity" />
+
         <activity android:name=".photo_save.PhotoSaveActivity"/>
 
         <activity android:name=".photo_details.PhotoDetailsActivity" />

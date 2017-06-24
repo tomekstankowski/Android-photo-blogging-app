@@ -1,13 +1,17 @@
 package com.tomaszstankowski.trainingapplication.main;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragment;
 import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosFragment;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,7 +21,8 @@ import butterknife.ButterKnife;
  */
 
 public class MainActivity extends AppCompatActivity implements MainView {
-    private MainPresenter mPresenter;
+    @Inject
+    MainPresenter mPresenter;
 
     @BindView(R.id.activity_main_bottom_navigation)
     BottomNavigationView mNavigationBar;
@@ -27,14 +32,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        if (mPresenter == null)
-            mPresenter = new MainPresenterImpl(this);
+        ((App) getApplication()).getMainComponent().inject(this);
+
         //make sure we don't create another fragment on configuration change
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.activity_main_fragment_container, new PhotoCaptureFragment())
                     .commit();
         }
+
         mNavigationBar.setOnNavigationItemSelectedListener(item -> {
             Fragment fragment = null;
             switch (item.getItemId()) {
@@ -56,6 +62,19 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     .commit();
             return true;
         });
+
+        mPresenter.onCreateView(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mPresenter.onStartView();
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 
     @Override

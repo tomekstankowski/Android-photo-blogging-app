@@ -15,7 +15,6 @@ public class App extends Application {
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         mMainComponent = DaggerMainComponent.builder()
                 .appModule(new AppModule(this))
-                .modelModule(new ModelModule())
                 .presenterModule(new PresenterModule())
                 .interactorModule(new InteractorModule())
                 .utilModule(new UtilModule())

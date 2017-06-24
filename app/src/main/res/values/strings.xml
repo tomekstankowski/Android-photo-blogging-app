@@ -10,6 +10,9 @@
     <string name="save_error">An error occurred. Could not save your photo.</string>
     <string name="load_error">An error occurred. Could not load the content.</string>
     <string name="remove_error">>An error occurred. Could not remove the photo.</string>
+    <string name="no_internet_connection">No internet connection.</string>
+    <string name="sign_in_required">You need to sign in first.</string>
+    <string name="retry">Try again</string>
     <string name="save">Save</string>
     <string name="back">Back</string>
     <string name="edit">Edit</string>
