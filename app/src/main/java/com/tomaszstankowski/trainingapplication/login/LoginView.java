@@ -12,9 +12,11 @@ public interface LoginView {
 
     void startActivityForResult(Intent intent, int requestCode);
 
+    void showLoggedOutView();
+
     void showRetryView(LoginView.Message message);
 
     int getThemeId();
 
-    void finish();
+    void finish(int resultCode);
 }

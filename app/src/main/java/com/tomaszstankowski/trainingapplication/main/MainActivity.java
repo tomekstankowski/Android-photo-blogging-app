@@ -1,6 +1,7 @@
 package com.tomaszstankowski.trainingapplication.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -9,16 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragment;
+import com.tomaszstankowski.trainingapplication.settings.SettingsFragment;
 import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosFragment;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-/**
- * Entry point for initializing other Views(fragments)
- */
 
 public class MainActivity extends AppCompatActivity implements MainView {
     @Inject
@@ -34,13 +32,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ButterKnife.bind(this);
         ((App) getApplication()).getMainComponent().inject(this);
 
-        //make sure we don't create another fragment on configuration change
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_main_fragment_container, new PhotoCaptureFragment())
-                    .commit();
-        }
-
         mNavigationBar.setOnNavigationItemSelectedListener(item -> {
             Fragment fragment = null;
             switch (item.getItemId()) {
@@ -54,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     fragment = new UserPhotosFragment();
                     break;
                 case R.id.activity_main_menu_settings:
-                    //// TODO: 4/14/2017
+                    fragment = new SettingsFragment();
                     break;
             }
             getSupportFragmentManager().beginTransaction()
@@ -70,6 +61,17 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public void onStart() {
         super.onStart();
         mPresenter.onStartView();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mPresenter.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void showHomePage() {
+        mNavigationBar.setSelectedItemId(R.id.activity_main_menu_home);
     }
 
     @Override

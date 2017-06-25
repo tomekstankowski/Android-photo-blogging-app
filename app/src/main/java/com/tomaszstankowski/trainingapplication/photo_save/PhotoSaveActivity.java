@@ -32,6 +32,7 @@ import butterknife.OnClick;
  */
 
 public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveView {
+    public static final int REQUEST_CODE = 333;
     @Inject
     PhotoSavePresenter mPresenter;
 

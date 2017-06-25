@@ -3,8 +3,14 @@
 
     <corners android:radius="60dp" />
 
+    <padding
+        android:bottom="@dimen/margin_small"
+        android:top="@dimen/margin_small"
+        android:right="@dimen/margin_small"
+        android:left="@dimen/margin_small" />
+
     <stroke
-        android:width="2dp"
+        android:width="1dp"
         android:color="@color/red" />
 
 </shape>

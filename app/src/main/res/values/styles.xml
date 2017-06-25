@@ -15,7 +15,17 @@
         <item name="android:layout_height">30dp</item>
         <item name="android:textAppearance">@android:style/TextAppearance.Material.Small</item>
         <item name="android:textSize">@dimen/text_small</item>
-        <item name="android:textAllCaps">true</item>
+        <item name="android:background">@drawable/secondary_button</item>
+        <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="ButtonSmall.Red" parent="ButtonSmall">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Material.Small</item>
+        <item name="android:textSize">@dimen/text_small</item>
+        <item name="android:background">@drawable/secondary_button_red</item>
+        <item name="android:textColor">@color/red</item>
     </style>
 
     <style name="ButtonBig">

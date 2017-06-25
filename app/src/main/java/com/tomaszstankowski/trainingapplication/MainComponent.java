@@ -5,6 +5,7 @@ import com.tomaszstankowski.trainingapplication.main.MainActivity;
 import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragment;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
+import com.tomaszstankowski.trainingapplication.settings.SettingsFragment;
 import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosFragment;
 
 import javax.inject.Singleton;
@@ -29,6 +30,8 @@ public interface MainComponent {
     void inject(PhotoCaptureFragment fragment);
 
     void inject(UserPhotosFragment fragment);
+
+    void inject(SettingsFragment fragment);
 
     void inject(PhotoDetailsActivity activity);
 

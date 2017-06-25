@@ -12,6 +12,8 @@ import java.util.Arrays;
 
 import javax.inject.Inject;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class LoginPresenterImpl implements LoginPresenter {
     private LoginView mView;
@@ -22,9 +24,16 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void onCreateView(LoginView view) {
+    public void onCreateView(LoginView view, int requestCode) {
         mView = view;
-        startAuth();
+        switch (requestCode) {
+            case LoginActivity.REQUEST_CODE_LOG_IN:
+                startAuth();
+                break;
+            case LoginActivity.REQUEST_CODE_LOGGED_OUT:
+                mView.showLoggedOutView();
+                break;
+        }
     }
 
     @Override
@@ -33,7 +42,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void onRetryButtonClicked() {
+    public void onLogInButtonClicked() {
         startAuth();
     }
 
@@ -59,7 +68,7 @@ public class LoginPresenterImpl implements LoginPresenter {
 
             // Successfully signed in
             if (resultCode == ResultCodes.OK) {
-                mView.finish();
+                mView.finish(RESULT_OK);
             } else {
                 // Sign in failed
                 if (response == null) {

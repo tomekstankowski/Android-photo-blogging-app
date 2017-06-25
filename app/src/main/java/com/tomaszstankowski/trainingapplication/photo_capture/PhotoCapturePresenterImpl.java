@@ -23,7 +23,6 @@ import static android.app.Activity.RESULT_OK;
 @Singleton
 public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCaptureInteractor.OnLastPhotoChangeListener {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int REQUEST_PHOTO_SAVE = 2;
     private static final String TEMP_IMAGE_PATH = "TEMP_IMAGE_PATH";
     private static final String PHOTO = "PHOTO";
     private static final String IMAGE_URI = "IMAGE_URI";
@@ -115,7 +114,7 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             onPhotoCaptured(mView.getContext());
         }
-        if (requestCode == REQUEST_PHOTO_SAVE)
+        if (requestCode == PhotoSaveActivity.REQUEST_CODE)
             //was temporary removed just before starting PhotoSaveActivity
             mInteractor.observeUserLastPhoto(this);
     }
@@ -124,7 +123,7 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
         mManager.addImageToSystemGallery(mTempImageFile);
         Intent photoSaveIntent = new Intent(context, PhotoSaveActivity.class);
         photoSaveIntent.putExtra(TEMP_IMAGE_PATH, mTempImageFile.getAbsolutePath());
-        mView.startActivityForResult(photoSaveIntent, REQUEST_PHOTO_SAVE);
+        mView.startActivityForResult(photoSaveIntent, PhotoSaveActivity.REQUEST_CODE);
         //otherwise listener is trying to access image in storage before it's fully uploaded
         //we can't atomically save the photo in database and save image in storage
         mInteractor.stopObservingUserLastPhoto();

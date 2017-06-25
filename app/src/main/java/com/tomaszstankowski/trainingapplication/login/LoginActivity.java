@@ -17,12 +17,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * Actually signing up is not performed in this fragment.
- * It's only responsible for displaying error message and 'retry' button.
- * Holding unsigned user from application.
+ * Business logic is done in Firebase AuthUI, which is started from here.
+ * This fragment is responsible for displaying view according to whether user wants to sign in for
+ * the first time or just logged out and also displaying error message.
+ * It's holding unsigned user from the application.
  */
 
 public class LoginActivity extends AppCompatActivity implements LoginView {
+    public static final String REQUEST_CODE = "REQUEST_CODE";
+    public static final int REQUEST_CODE_LOG_IN = 333;
+    public static final int REQUEST_CODE_LOGGED_OUT = 444;
 
     @Inject
     LoginPresenter mPresenter;
@@ -31,12 +35,12 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     TextView mUuupsTv;
     @BindView(R.id.activity_login_textview_message)
     TextView mMessageTv;
-    @BindView(R.id.activity_login_button_retry)
-    Button mRetryButton;
+    @BindView(R.id.activity_login_button_log_in)
+    Button mLogInButton;
 
-    @OnClick(R.id.activity_login_button_retry)
-    public void onRetryButtonClicked() {
-        mPresenter.onRetryButtonClicked();
+    @OnClick(R.id.activity_login_button_log_in)
+    public void onLogInButtonClicked() {
+        mPresenter.onLogInButtonClicked();
     }
 
     @Override
@@ -45,7 +49,13 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
         ((App) getApplication()).getMainComponent().inject(this);
-        mPresenter.onCreateView(this);
+        Intent intent = getIntent();
+        int requestCode;
+        if (intent == null)
+            requestCode = REQUEST_CODE_LOG_IN;
+        else
+            requestCode = intent.getIntExtra(REQUEST_CODE, REQUEST_CODE_LOG_IN);
+        mPresenter.onCreateView(this, requestCode);
     }
 
     @Override
@@ -56,13 +66,26 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
 
     @Override
     public void onBackPressed() {
-        //no back allowed
+        //not allowed
+    }
+
+    @Override
+    public void finish(int resultCode) {
+        setResult(resultCode);
+        finish();
     }
 
     @Override
     public void onDestroy() {
         mPresenter.onDestroyView();
         super.onDestroy();
+    }
+
+    @Override
+    public void showLoggedOutView() {
+        mMessageTv.setVisibility(View.VISIBLE);
+        mMessageTv.setText(R.string.logged_out);
+        mLogInButton.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -80,7 +103,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                 mMessageTv.setText(R.string.sign_in_required);
                 break;
         }
-        mRetryButton.setVisibility(View.VISIBLE);
+        mLogInButton.setVisibility(View.VISIBLE);
     }
 
     @Override

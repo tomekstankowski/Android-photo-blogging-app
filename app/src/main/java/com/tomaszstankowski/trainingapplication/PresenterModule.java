@@ -10,6 +10,8 @@ import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsPresen
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsPresenterImpl;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSavePresenter;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSavePresenterImpl;
+import com.tomaszstankowski.trainingapplication.settings.SettingsPresenter;
+import com.tomaszstankowski.trainingapplication.settings.SettingsPresenterImpl;
 import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosPresenter;
 import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosPresenterImpl;
 
@@ -53,6 +55,12 @@ public class PresenterModule {
     @Provides
     @Singleton
     UserPhotosPresenter providesUserPhotosPresenter(UserPhotosPresenterImpl impl) {
+        return impl;
+    }
+
+    @Provides
+    @Singleton
+    SettingsPresenter providesSettingsPresenter(SettingsPresenterImpl impl) {
         return impl;
     }
 }

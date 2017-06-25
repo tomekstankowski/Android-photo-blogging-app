@@ -14,14 +14,14 @@
         android:layout_marginTop="8dp"
         android:textAppearance="@android:style/TextAppearance.Material.Title"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/activity_login_button_retry"
+        app:layout_constraintBottom_toTopOf="@+id/activity_login_button_log_in"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.71000004" />
 
     <Button
-        android:id="@+id/activity_login_button_retry"
+        android:id="@+id/activity_login_button_log_in"
         style="@style/ButtonBig"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/retry"
+        android:text="@string/log_in"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

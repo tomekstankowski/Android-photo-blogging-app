@@ -5,7 +5,9 @@ import android.content.Intent;
 
 public interface MainView {
 
-    void startActivity(Intent intent);
+    void startActivityForResult(Intent intent, int requestCode);
 
     Context getContext();
+
+    void showHomePage();
 }
