@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tomaszstankowski.trainingapplication.App;
@@ -37,6 +38,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     TextView mMessageTv;
     @BindView(R.id.activity_login_button_log_in)
     Button mLogInButton;
+    @BindView(R.id.activity_login_progressbar)
+    ProgressBar mProgressbar;
 
     @OnClick(R.id.activity_login_button_log_in)
     public void onLogInButtonClicked() {
@@ -86,6 +89,16 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         mMessageTv.setVisibility(View.VISIBLE);
         mMessageTv.setText(R.string.logged_out);
         mLogInButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showProgressbar() {
+        mProgressbar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressbar() {
+        mProgressbar.setVisibility(View.GONE);
     }
 
     @Override

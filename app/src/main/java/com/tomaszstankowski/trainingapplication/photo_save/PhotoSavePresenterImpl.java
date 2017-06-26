@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
 
-import com.tomaszstankowski.trainingapplication.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.util.ImageManager;
 
@@ -15,7 +16,7 @@ import javax.inject.Singleton;
 
 
 /**
- * Presenter responding to PhotoSaveActivity calls
+ * Presenter responding to PhotoSaveActivity calls.
  */
 @Singleton
 public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInteractor.OnPhotoSaveListener {
@@ -23,6 +24,7 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
     private static final String IMAGE_URI = "IMAGE_URI";
     private static final String PHOTO = "PHOTO";
 
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private PhotoSaveInteractor mInteractor;
     private ImageManager mManager;
     private PhotoSaveView mView;
@@ -64,18 +66,23 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
         //saving captured photo
         if (mPhoto == null) {
             String path = activity.getIntent().getStringExtra(TEMP_IMAGE_PATH);
-            mPhoto = new Photo(title, desc, "admin");
-            new AsyncTask<String, Void, Uri>() {
-                @Override
-                protected Uri doInBackground(String... params) {
-                    return mManager.compressImage(params[0]);
-                }
+            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+            if (firebaseUser != null) {
+                mPhoto = new Photo(title, desc, firebaseUser.getUid());
+                new AsyncTask<String, Void, Uri>() {
+                    @Override
+                    protected Uri doInBackground(String... params) {
+                        return mManager.compressImage(params[0]);
+                    }
 
-                @Override
-                protected void onPostExecute(Uri result) {
-                    mInteractor.savePhoto(mPhoto, result, PhotoSavePresenterImpl.this);
-                }
-            }.execute(path);
+                    @Override
+                    protected void onPostExecute(Uri result) {
+                        mInteractor.savePhoto(mPhoto, result, PhotoSavePresenterImpl.this);
+                    }
+                }.execute(path);
+            } else {
+                onSaveError();
+            }
         }
         //editing already existing photo
         else {
@@ -89,28 +96,27 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
 
     @Override
     public void onBackButtonClicked() {
-        mView.getActivityContext().finish();
+        mView.finish();
     }
 
     @Override
     public void onSaveSuccess() {
-        if (mView == null)
-            return;
-        Activity activity = mView.getActivityContext();
-        if (activity.getParent() == null) {
-            activity.setResult(Activity.RESULT_OK);
-        } else {
-            activity.getParent().setResult(Activity.RESULT_OK);
+        if (mView != null) {
+            Activity activity = mView.getActivityContext();
+            if (activity.getParent() == null) {
+                activity.setResult(Activity.RESULT_OK);
+            } else {
+                activity.getParent().setResult(Activity.RESULT_OK);
+            }
+            mView.finish();
         }
-        activity.finish();
     }
 
     @Override
     public void onSaveError() {
-        if (mView == null)
-            return;
-        Activity activity = mView.getActivityContext();
-        mView.showMessage(activity.getString(R.string.save_error));
-        activity.finish();
+        if (mView != null) {
+            mView.showMessage(PhotoSaveView.Message.ERROR);
+            mView.finish();
+        }
     }
 }

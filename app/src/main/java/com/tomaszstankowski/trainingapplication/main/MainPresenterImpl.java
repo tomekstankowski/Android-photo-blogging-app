@@ -20,6 +20,9 @@ public class MainPresenterImpl implements MainPresenter{
     @Override
     public void onCreateView(MainView view) {
         mView = view;
+        if (mAuth.getCurrentUser() != null) {
+            mView.showHomePage();
+        }
     }
 
     @Override
@@ -31,8 +34,6 @@ public class MainPresenterImpl implements MainPresenter{
             mView.startActivityForResult(
                     intent,
                     LoginActivity.REQUEST_CODE_LOG_IN);
-        } else {
-            mView.showHomePage();
         }
     }
 

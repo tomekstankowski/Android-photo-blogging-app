@@ -52,4 +52,19 @@ public class DataBaseAccessor {
     public Query getUserPhotos(String userKey) {
         return mDatabase.getReference("users").child(userKey).child("photos").orderByKey();
     }
+
+    public DatabaseReference getUser(String key) {
+        return mDatabase.getReference("users").child(key);
+    }
+
+    public Task<Void> saveUser(User user) {
+        return mDatabase.getReference("users").child(user.key).setValue(user);
+    }
+
+    public Task<Void> editUserProfile(User user) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("users/" + user.key + "/name", user.name);
+        data.put("users/" + user.key + "/email", user.email);
+        return mDatabase.getReference().updateChildren(data);
+    }
 }

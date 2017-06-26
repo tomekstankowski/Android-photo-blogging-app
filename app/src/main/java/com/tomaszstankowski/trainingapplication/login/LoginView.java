@@ -16,6 +16,10 @@ public interface LoginView {
 
     void showRetryView(LoginView.Message message);
 
+    void showProgressbar();
+
+    void hideProgressbar();
+
     int getThemeId();
 
     void finish(int resultCode);

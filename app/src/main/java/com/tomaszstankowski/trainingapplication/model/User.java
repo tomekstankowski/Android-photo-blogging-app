@@ -1,6 +1,7 @@
 package com.tomaszstankowski.trainingapplication.model;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -16,15 +17,16 @@ import java.util.Map;
 public class User implements Serializable {
     @Exclude
     public String key;
-    public String userName;
+    public String name;
+    public String email;
     public Map<String, Boolean> photos = new HashMap<>();
 
-    public User(@NonNull String userName) {
-        this.userName = userName;
+    public User() {
     }
 
-    @Exclude
-    public void attachPhoto(Photo photo) {
-        photos.put(photo.key, true);
+    public User(@NonNull String name, @NonNull String key, @Nullable String email) {
+        this.name = name;
+        this.key = key;
+        this.email = email;
     }
 }

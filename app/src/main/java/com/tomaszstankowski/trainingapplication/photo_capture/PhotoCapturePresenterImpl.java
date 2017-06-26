@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
@@ -27,6 +29,7 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
     private static final String PHOTO = "PHOTO";
     private static final String IMAGE_URI = "IMAGE_URI";
 
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private ImageManager mManager;
     private PhotoCaptureInteractor mInteractor;
     private Photo mPhoto;
@@ -49,7 +52,10 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
     @Override
     public void onCreateView(PhotoCaptureView view) {
         mView = view;
-        mInteractor.observeUserLastPhoto(this);
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        if (firebaseUser != null) {
+            mInteractor.observeUserLastPhoto(firebaseUser.getUid(), this);
+        }
     }
 
     @Override
@@ -114,9 +120,12 @@ public class PhotoCapturePresenterImpl implements PhotoCapturePresenter, PhotoCa
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             onPhotoCaptured(mView.getContext());
         }
-        if (requestCode == PhotoSaveActivity.REQUEST_CODE)
+        if (requestCode == PhotoSaveActivity.REQUEST_CODE) {
             //was temporary removed just before starting PhotoSaveActivity
-            mInteractor.observeUserLastPhoto(this);
+            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+            if (firebaseUser != null)
+                mInteractor.observeUserLastPhoto(firebaseUser.getUid(), this);
+        }
     }
 
     private void onPhotoCaptured(Context context) {

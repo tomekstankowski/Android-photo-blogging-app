@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
@@ -32,6 +33,8 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     RecyclerView mRecyclerView;
     @BindView(R.id.fragment_user_photos_progressbar)
     ProgressBar mProgressBar;
+    @BindView(R.id.fragment_user_photos_textview_username)
+    TextView mUsernameTv;
 
     private GalleryViewAdapter mAdapter;
     private Unbinder mUnbinder;
@@ -89,12 +92,7 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     }
 
     @Override
-    public void showProgressBar() {
-        mProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideProgressBar() {
-        mProgressBar.setVisibility(View.GONE);
+    public void updateUserView(String username) {
+        mUsernameTv.setText(username + "'s photos");
     }
 }

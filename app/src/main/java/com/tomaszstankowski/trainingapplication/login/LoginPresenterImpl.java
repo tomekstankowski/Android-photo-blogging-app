@@ -1,12 +1,16 @@
 package com.tomaszstankowski.trainingapplication.login;
 
 import android.content.Intent;
+import android.support.annotation.Nullable;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.BuildConfig;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.tomaszstankowski.trainingapplication.model.User;
 
 import java.util.Arrays;
 
@@ -15,12 +19,18 @@ import javax.inject.Inject;
 import static android.app.Activity.RESULT_OK;
 
 
-public class LoginPresenterImpl implements LoginPresenter {
-    private LoginView mView;
+public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUserFetchListener,
+        LoginInteractor.OnUserSaveListener {
+
     private final int RC_SIGN_IN = 222;
 
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private LoginView mView;
+    private LoginInteractor mInteractor;
+
     @Inject
-    public LoginPresenterImpl() {
+    public LoginPresenterImpl(LoginInteractor interactor) {
+        mInteractor = interactor;
     }
 
     @Override
@@ -65,10 +75,16 @@ public class LoginPresenterImpl implements LoginPresenter {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
-
             // Successfully signed in
             if (resultCode == ResultCodes.OK) {
-                mView.finish(RESULT_OK);
+                //check if the user exists in database
+                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                if (firebaseUser != null) {
+                    mInteractor.getUser(firebaseUser.getUid(), this);
+                    mView.showProgressbar();
+                } else {
+                    mView.showRetryView(LoginView.Message.ERROR);
+                }
             } else {
                 // Sign in failed
                 if (response == null) {
@@ -81,5 +97,46 @@ public class LoginPresenterImpl implements LoginPresenter {
                 }
             }
         }
+    }
+
+    @Override
+    public void onUserFetchSuccess(@Nullable User user) {
+        //save user
+        if (user == null) {
+            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+            if (firebaseUser != null) {
+                String name = firebaseUser.getDisplayName();
+                String key = firebaseUser.getUid();
+                String email = mAuth.getCurrentUser().getEmail();
+                if (name != null && key != null) {
+                    user = new User(name, key, email);
+                    mInteractor.saveUser(user, this);
+                    return;
+                }
+            }
+            mView.showRetryView(LoginView.Message.ERROR);
+            mView.hideProgressbar();
+        }
+        //user exists in database
+        else {
+            mView.finish(RESULT_OK);
+        }
+    }
+
+    @Override
+    public void onUserFetchFailure() {
+        mView.showRetryView(LoginView.Message.ERROR);
+        mView.hideProgressbar();
+    }
+
+    @Override
+    public void onUserSaveSuccess() {
+        mView.finish(RESULT_OK);
+    }
+
+    @Override
+    public void onUserSaveFailure() {
+        mView.showRetryView(LoginView.Message.ERROR);
+        mView.hideProgressbar();
     }
 }

@@ -12,6 +12,9 @@
     <string name="remove_error">>An error occurred. Could not remove the photo.</string>
     <string name="no_internet_connection">No internet connection.</string>
     <string name="sign_in_required">You need to sign in.</string>
+    <string name="username">Username</string>
+    <string name="saved_changes">Saved changes.</string>
+    <string name="no_changes">No changes made.</string>
     <string name="log_out">Log out</string>
     <string name="log_in">Log in</string>
     <string name="logged_out">You have logged out.</string>
@@ -23,4 +26,6 @@
     <string name="title">Title</string>
     <string name="desc">Description</string>
     <string name="last_photo">Your last photo</string>
+    <!-->FirebaseUI override<-->
+    <string name="name_hint" translation_description="Hint for name input field">Username</string>
 </resources>

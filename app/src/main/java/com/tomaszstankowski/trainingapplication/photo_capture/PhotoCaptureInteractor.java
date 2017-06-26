@@ -17,7 +17,7 @@ public interface PhotoCaptureInteractor {
         void onLastPhotoFetchError();
     }
 
-    void observeUserLastPhoto(OnLastPhotoChangeListener listener);
+    void observeUserLastPhoto(String userKey, OnLastPhotoChangeListener listener);
 
     void stopObservingUserLastPhoto();
 }

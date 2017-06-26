@@ -3,12 +3,12 @@ package com.tomaszstankowski.trainingapplication.photo_details;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tomaszstankowski.trainingapplication.App;
@@ -28,6 +28,8 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     @Inject
     PhotoDetailsPresenter mPresenter;
 
+    @BindView(R.id.activity_photo_details_rootview)
+    View mRootView;
     @BindView(R.id.activity_photo_details_textview_author)
     TextView mAuthorTv;
     @BindView(R.id.activity_photo_details_textview_title)
@@ -65,13 +67,17 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     }
 
     @Override
-    public void updateView(String title, String author, String desc, String date, Uri image, boolean isVisible) {
+    public void updatePhotoView(String title, String desc, String date, Uri image) {
         mImage.setImageURI(image);
         mTitleTv.setText(title);
-        mAuthorTv.setText(author);
         mDescTv.setText(desc);
         mDateTv.setText(date);
-        if (isVisible) {
+    }
+
+    @Override
+    public void updateAuthorView(String author, boolean isAuthor) {
+        mAuthorTv.setText(author);
+        if (isAuthor) {
             mEditBttn.setVisibility(View.VISIBLE);
             mRemoveBttn.setVisibility(View.VISIBLE);
         }
@@ -93,7 +99,15 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     }
 
     @Override
-    public void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    public void showMessage(Message message) {
+        switch (message) {
+            case LOAD_ERROR:
+                Snackbar.make(mRootView, R.string.load_error, Snackbar.LENGTH_LONG).show();
+                break;
+            case REMOVE_ERROR:
+                Snackbar.make(mRootView, R.string.remove_error, Snackbar.LENGTH_LONG).show();
+                break;
+        }
+
     }
 }

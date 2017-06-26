@@ -15,7 +15,7 @@ public interface UserPhotosInteractor {
         void onPhotoRemoved(String photoKey);
     }
 
-    void observeUserPhotos(OnUserPhotosChangesListener listener);
+    void observeUserPhotos(String userKey, OnUserPhotosChangesListener listener);
 
     void stopObservingUserPhotos();
 }

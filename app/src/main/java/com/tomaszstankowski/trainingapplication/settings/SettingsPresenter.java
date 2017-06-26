@@ -8,4 +8,6 @@ public interface SettingsPresenter {
     void onDestroyView();
 
     void onLogOutButtonClicked();
+
+    void onSaveButtonClicked(String username);
 }

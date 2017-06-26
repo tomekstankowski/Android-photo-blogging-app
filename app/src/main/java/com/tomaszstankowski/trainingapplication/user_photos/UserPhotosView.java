@@ -17,9 +17,7 @@ public interface UserPhotosView {
 
     void startActivity(Intent intent);
 
+    void updateUserView(String username);
+
     Context getContext();
-
-    void showProgressBar();
-
-    void hideProgressBar();
 }

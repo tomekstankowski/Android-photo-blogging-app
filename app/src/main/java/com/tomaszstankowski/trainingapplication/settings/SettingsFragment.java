@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
@@ -27,11 +30,24 @@ public class SettingsFragment extends Fragment implements SettingsView {
 
     @BindView(R.id.fragment_settings_button_log_out)
     Button mLogOutBttn;
-
     @OnClick(R.id.fragment_settings_button_log_out)
     public void onLogOutButtonClicked() {
         mPresenter.onLogOutButtonClicked();
     }
+
+    @BindView(R.id.fragment_settings_button_save)
+    Button mSaveButtn;
+
+    @OnClick(R.id.fragment_settings_button_save)
+    public void onSaveButtonClicked() {
+        mPresenter.onSaveButtonClicked(mUsernameEditTxt.getText().toString());
+    }
+
+    @BindView(R.id.fragment_settings_edittext_username)
+    EditText mUsernameEditTxt;
+
+    @BindView(R.id.fragment_settings_progressbar)
+    ProgressBar mProgressbar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,11 +69,40 @@ public class SettingsFragment extends Fragment implements SettingsView {
         mPresenter.onCreateView(this);
     }
 
+    @Override
+    public void update(String username) {
+        mUsernameEditTxt.setText(username);
+    }
 
     @Override
     public void onDestroyView() {
         mPresenter.onDestroyView();
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void showMessage(Message message) {
+        switch (message) {
+            case SUCCESS:
+                Toast.makeText(getActivity(), R.string.saved_changes, Toast.LENGTH_SHORT).show();
+                break;
+            case UNCHANGED:
+                Toast.makeText(getActivity(), R.string.no_changes, Toast.LENGTH_SHORT).show();
+                break;
+            case ERROR:
+                Toast.makeText(getActivity(), R.string.error, Toast.LENGTH_SHORT).show();
+                break;
+        }
+    }
+
+    @Override
+    public void showProgressbar() {
+        mProgressbar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressbar() {
+        mProgressbar.setVisibility(View.GONE);
     }
 }

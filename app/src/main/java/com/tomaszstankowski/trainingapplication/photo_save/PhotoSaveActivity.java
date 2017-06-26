@@ -106,8 +106,13 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
     }
 
     @Override
-    public void showMessage(String message){
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    public void showMessage(Message message) {
+        switch (message) {
+            case ERROR:
+                Toast.makeText(this, R.string.save_error, Toast.LENGTH_SHORT).show();
+                break;
+        }
+
     }
 
     @Override

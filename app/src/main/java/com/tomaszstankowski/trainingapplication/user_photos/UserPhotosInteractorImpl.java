@@ -10,19 +10,15 @@ import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Singleton
 public class UserPhotosInteractorImpl implements UserPhotosInteractor, ChildEventListener {
     private DataBaseAccessor mDataAccessor;
     private StorageAccessor mStorageAccessor;
-    private String mUserKey;
 
     @Inject
-    UserPhotosInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor,
-                             @Named("userKey") String userKey) {
-        mUserKey = userKey;
+    UserPhotosInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor) {
         mDataAccessor = dataBaseAccessor;
         mStorageAccessor = storageAccessor;
     }
@@ -31,9 +27,9 @@ public class UserPhotosInteractorImpl implements UserPhotosInteractor, ChildEven
     private OnUserPhotosChangesListener mListener;
 
     @Override
-    public void observeUserPhotos(OnUserPhotosChangesListener listener) {
+    public void observeUserPhotos(String userKey, OnUserPhotosChangesListener listener) {
         mListener = listener;
-        mQuery = mDataAccessor.getUserPhotos(mUserKey);
+        mQuery = mDataAccessor.getUserPhotos(userKey);
         mQuery.addChildEventListener(this);
     }
 

@@ -17,8 +17,7 @@ import dagger.Component;
         AppModule.class,
         PresenterModule.class,
         InteractorModule.class,
-        UtilModule.class,
-        LoginModule.class,
+        UtilModule.class
 })
 
 public interface MainComponent {

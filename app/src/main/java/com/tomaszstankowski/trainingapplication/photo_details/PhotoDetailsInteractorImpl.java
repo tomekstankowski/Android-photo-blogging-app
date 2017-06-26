@@ -6,6 +6,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.tomaszstankowski.trainingapplication.model.DataBaseAccessor;
 import com.tomaszstankowski.trainingapplication.model.Photo;
+import com.tomaszstankowski.trainingapplication.model.User;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -54,5 +55,26 @@ public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor, Value
     @Override
     public void onCancelled(DatabaseError databaseError) {
         mListener.onPhotoFetchError();
+    }
+
+    @Override
+    public void getUser(String key, OnUserFetchListener listener) {
+        mDataAccessor.getUser(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                    user.key = dataSnapshot.getKey();
+                    listener.onUserFetchSuccess(user);
+                } else {
+                    listener.onUserFetchFailure();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                listener.onUserFetchFailure();
+            }
+        });
     }
 }

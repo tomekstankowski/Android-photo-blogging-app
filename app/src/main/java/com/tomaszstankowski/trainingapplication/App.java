@@ -18,7 +18,6 @@ public class App extends Application {
                 .presenterModule(new PresenterModule())
                 .interactorModule(new InteractorModule())
                 .utilModule(new UtilModule())
-                .loginModule(new LoginModule())
                 .build();
     }
 

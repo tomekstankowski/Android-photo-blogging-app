@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
 
@@ -23,6 +25,7 @@ public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosI
     private static final String PHOTO = "PHOTO";
     private static final String IMAGE_URI = "IMAGE_URI";
 
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private UserPhotosView mView;
     private UserPhotosInteractor mInteractor;
     private List<Photo> mPhotos = new ArrayList<>();
@@ -36,7 +39,11 @@ public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosI
     @Override
     public void onCreateView(UserPhotosView view) {
         mView = view;
-        mInteractor.observeUserPhotos(this);
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        if (firebaseUser != null) {
+            mInteractor.observeUserPhotos(firebaseUser.getUid(), this);
+            mView.updateUserView(firebaseUser.getDisplayName());
+        }
     }
 
     @Override

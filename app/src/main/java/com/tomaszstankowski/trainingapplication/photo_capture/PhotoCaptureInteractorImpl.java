@@ -10,29 +10,25 @@ import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 @Singleton
 public class PhotoCaptureInteractorImpl implements PhotoCaptureInteractor, ChildEventListener {
     private DataBaseAccessor mDataAccessor;
     private StorageAccessor mStorageAccessor;
-    private String mUserKey;
     private Query mQuery;
     private OnLastPhotoChangeListener mListener;
 
     @Inject
-    PhotoCaptureInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor,
-                               @Named("userKey") String userKey) {
+    PhotoCaptureInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor) {
         mDataAccessor = dataBaseAccessor;
         mStorageAccessor = storageAccessor;
-        mUserKey = userKey;
     }
 
     @Override
-    public void observeUserLastPhoto(OnLastPhotoChangeListener listener) {
+    public void observeUserLastPhoto(String userKey, OnLastPhotoChangeListener listener) {
         mListener = listener;
-        mQuery = mDataAccessor.getUserLastPhoto(mUserKey);
+        mQuery = mDataAccessor.getUserLastPhoto(userKey);
         mQuery.addChildEventListener(this);
     }
 
