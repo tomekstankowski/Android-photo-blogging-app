@@ -1,11 +1,11 @@
 package com.tomaszstankowski.trainingapplication;
 
+import com.tomaszstankowski.trainingapplication.home.HomePresenter;
+import com.tomaszstankowski.trainingapplication.home.HomePresenterImpl;
 import com.tomaszstankowski.trainingapplication.login.LoginPresenter;
 import com.tomaszstankowski.trainingapplication.login.LoginPresenterImpl;
 import com.tomaszstankowski.trainingapplication.main.MainPresenter;
 import com.tomaszstankowski.trainingapplication.main.MainPresenterImpl;
-import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCapturePresenter;
-import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCapturePresenterImpl;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsPresenter;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsPresenterImpl;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSavePresenter;
@@ -21,7 +21,7 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class PresenterModule {
+class PresenterModule {
     @Provides
     @Singleton
     MainPresenter providesMainPresenter(MainPresenterImpl impl) {
@@ -36,7 +36,7 @@ public class PresenterModule {
 
     @Provides
     @Singleton
-    PhotoCapturePresenter providesPhotoCapturePresenter(PhotoCapturePresenterImpl impl) {
+    HomePresenter providesPhotoCapturePresenter(HomePresenterImpl impl) {
         return impl;
     }
 

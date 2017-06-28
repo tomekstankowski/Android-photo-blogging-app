@@ -1,15 +1,19 @@
 package com.tomaszstankowski.trainingapplication.login;
 
-import android.content.Intent;
+
+import com.firebase.ui.auth.IdpResponse;
 
 
 public interface LoginPresenter {
 
-    void onCreateView(LoginView view, int requestCode);
+    /**
+     * @param mode is view behaviour requested by parent
+     */
+    void onCreateView(LoginView view, int mode);
 
     void onDestroyView();
 
     void onLogInButtonClicked();
 
-    void onActivityResult(int requestCode, int resultCode, Intent data);
+    void onAuthUIResult(int resultCode, IdpResponse response);
 }

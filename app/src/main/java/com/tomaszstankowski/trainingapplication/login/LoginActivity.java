@@ -8,7 +8,10 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
 import com.tomaszstankowski.trainingapplication.App;
+import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.R;
 
 import javax.inject.Inject;
@@ -16,6 +19,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.tomaszstankowski.trainingapplication.Config.RC_AUTH_UI;
 
 /**
  * Business logic is done in Firebase AuthUI, which is started from here.
@@ -25,9 +30,6 @@ import butterknife.OnClick;
  */
 
 public class LoginActivity extends AppCompatActivity implements LoginView {
-    public static final String REQUEST_CODE = "REQUEST_CODE";
-    public static final int REQUEST_CODE_LOG_IN = 333;
-    public static final int REQUEST_CODE_LOGGED_OUT = 444;
 
     @Inject
     LoginPresenter mPresenter;
@@ -53,18 +55,25 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         ButterKnife.bind(this);
         ((App) getApplication()).getMainComponent().inject(this);
         Intent intent = getIntent();
-        int requestCode;
-        if (intent == null)
-            requestCode = REQUEST_CODE_LOG_IN;
-        else
-            requestCode = intent.getIntExtra(REQUEST_CODE, REQUEST_CODE_LOG_IN);
-        mPresenter.onCreateView(this, requestCode);
+        int mode = Config.LOGIN_VIEW_MODE_DEFAULT;
+        if (intent != null)
+            mode = intent.getIntExtra(Config.LOGIN_VIEW_MODE, mode);
+        mPresenter.onCreateView(this, mode);
+    }
+
+    @Override
+    public void startAuthUI(AuthUI.SignInIntentBuilder builder) {
+        builder.setTheme(R.style.AppTheme);
+        startActivityForResult(builder.build(), RC_AUTH_UI);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mPresenter.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_AUTH_UI) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+            mPresenter.onAuthUIResult(resultCode, response);
+        }
     }
 
     @Override
@@ -117,10 +126,5 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                 break;
         }
         mLogInButton.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public int getThemeId() {
-        return R.style.AppTheme;
     }
 }

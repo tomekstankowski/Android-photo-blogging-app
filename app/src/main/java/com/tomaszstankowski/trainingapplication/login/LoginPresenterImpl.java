@@ -1,7 +1,5 @@
 package com.tomaszstankowski.trainingapplication.login;
 
-import android.content.Intent;
-import android.support.annotation.Nullable;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.BuildConfig;
@@ -10,19 +8,16 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.ResultCodes;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.model.User;
 
 import java.util.Arrays;
 
 import javax.inject.Inject;
 
-import static android.app.Activity.RESULT_OK;
-
 
 public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUserFetchListener,
         LoginInteractor.OnUserSaveListener {
-
-    private final int RC_SIGN_IN = 222;
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private LoginView mView;
@@ -34,13 +29,13 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUse
     }
 
     @Override
-    public void onCreateView(LoginView view, int requestCode) {
+    public void onCreateView(LoginView view, int mode) {
         mView = view;
-        switch (requestCode) {
-            case LoginActivity.REQUEST_CODE_LOG_IN:
-                startAuth();
+        switch (mode) {
+            case Config.LOGIN_VIEW_MODE_DEFAULT:
+                startAuthUI();
                 break;
-            case LoginActivity.REQUEST_CODE_LOGGED_OUT:
+            case Config.LOGIN_VIEW_MODE_LOGGED_OUT:
                 mView.showLoggedOutView();
                 break;
         }
@@ -53,28 +48,22 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUse
 
     @Override
     public void onLogInButtonClicked() {
-        startAuth();
+        startAuthUI();
     }
 
-    private void startAuth() {
-        mView.startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
+    private void startAuthUI() {
+        mView.startAuthUI(
+                AuthUI.getInstance().createSignInIntentBuilder()
                         .setAvailableProviders(
                                 Arrays.asList(
                                         new AuthUI.IdpConfig.Builder(AuthUI.EMAIL_PROVIDER).build()
                                 )
                         )
-                        .setIsSmartLockEnabled(!BuildConfig.DEBUG)
-                        .setTheme(mView.getThemeId())
-                        .build(),
-                RC_SIGN_IN);
+                        .setIsSmartLockEnabled(!BuildConfig.DEBUG));
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
+    public void onAuthUIResult(int resultCode, IdpResponse response) {
             // Successfully signed in
             if (resultCode == ResultCodes.OK) {
                 //check if the user exists in database
@@ -96,11 +85,10 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUse
                     mView.showRetryView(LoginView.Message.ERROR);
                 }
             }
-        }
     }
 
     @Override
-    public void onUserFetchSuccess(@Nullable User user) {
+    public void onUserFetchSuccess(User user) {
         //save user
         if (user == null) {
             FirebaseUser firebaseUser = mAuth.getCurrentUser();
@@ -119,7 +107,7 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUse
         }
         //user exists in database
         else {
-            mView.finish(RESULT_OK);
+            mView.finish(Config.LOGIN_RESULT_OK);
         }
     }
 
@@ -131,7 +119,7 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUse
 
     @Override
     public void onUserSaveSuccess() {
-        mView.finish(RESULT_OK);
+        mView.finish(Config.LOGIN_RESULT_OK);
     }
 
     @Override

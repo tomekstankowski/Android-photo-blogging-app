@@ -5,6 +5,7 @@ package com.tomaszstankowski.trainingapplication.photo_details;
  */
 
 public interface PhotoDetailsPresenter {
+
     void onCreateView(PhotoDetailsView view);
 
     void onEditButtonClicked();

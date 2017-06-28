@@ -1,8 +1,8 @@
 package com.tomaszstankowski.trainingapplication;
 
+import com.tomaszstankowski.trainingapplication.home.HomeFragment;
 import com.tomaszstankowski.trainingapplication.login.LoginActivity;
 import com.tomaszstankowski.trainingapplication.main.MainActivity;
-import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragment;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
 import com.tomaszstankowski.trainingapplication.settings.SettingsFragment;
@@ -26,13 +26,14 @@ public interface MainComponent {
 
     void inject(LoginActivity activity);
 
-    void inject(PhotoCaptureFragment fragment);
+    void inject(PhotoDetailsActivity activity);
+
+    void inject(PhotoSaveActivity activity);
+
+    void inject(HomeFragment fragment);
 
     void inject(UserPhotosFragment fragment);
 
     void inject(SettingsFragment fragment);
 
-    void inject(PhotoDetailsActivity activity);
-
-    void inject(PhotoSaveActivity activity);
 }

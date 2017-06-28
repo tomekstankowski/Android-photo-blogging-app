@@ -1,6 +1,5 @@
 package com.tomaszstankowski.trainingapplication.main;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -8,8 +7,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
 import com.tomaszstankowski.trainingapplication.App;
+import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.R;
-import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureFragment;
+import com.tomaszstankowski.trainingapplication.home.HomeFragment;
+import com.tomaszstankowski.trainingapplication.login.LoginActivity;
 import com.tomaszstankowski.trainingapplication.settings.SettingsFragment;
 import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosFragment;
 
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
             Fragment fragment = null;
             switch (item.getItemId()) {
                 case R.id.activity_main_menu_home:
-                    fragment = new PhotoCaptureFragment();
+                    fragment = new HomeFragment();
                     break;
                 case R.id.activity_main_menu_discover:
                     //// TODO: 4/14/2017
@@ -64,19 +65,22 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
+    public void startLoginView(int mode) {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.putExtra(Config.LOGIN_VIEW_MODE, mode);
+        startActivityForResult(intent, Config.RC_LOGIN);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        mPresenter.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Config.RC_LOGIN)
+            mPresenter.onLoginViewResult(resultCode);
     }
 
     @Override
     public void showHomePage() {
         mNavigationBar.setSelectedItemId(R.id.activity_main_menu_home);
-    }
-
-    @Override
-    public Context getContext() {
-        return this;
     }
 
     @Override

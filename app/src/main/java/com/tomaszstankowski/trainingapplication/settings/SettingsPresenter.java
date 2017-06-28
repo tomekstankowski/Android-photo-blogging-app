@@ -9,5 +9,7 @@ public interface SettingsPresenter {
 
     void onLogOutButtonClicked();
 
+    void onLogOutCompleted();
+
     void onSaveButtonClicked(String username);
 }

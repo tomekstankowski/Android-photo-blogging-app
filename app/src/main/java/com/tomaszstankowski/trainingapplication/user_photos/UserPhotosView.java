@@ -1,7 +1,5 @@
 package com.tomaszstankowski.trainingapplication.user_photos;
 
-import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 
 /**
@@ -15,9 +13,7 @@ public interface UserPhotosView {
 
     void removeAllPhotos();
 
-    void startActivity(Intent intent);
+    void startPhotoDetailsView();
 
-    void updateUserView(String username);
-
-    Context getContext();
+    void updateUsername(String username);
 }

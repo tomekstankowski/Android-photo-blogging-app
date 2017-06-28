@@ -1,8 +1,6 @@
 package com.tomaszstankowski.trainingapplication.photo_details;
 
 
-import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 
 /**
@@ -19,9 +17,7 @@ public interface PhotoDetailsView {
 
     void updateAuthorView(String author, boolean isAuthor);
 
-    void startActivity(Intent intent);
-
-    Activity getActivityContext();
+    void startPhotoSaveView();
 
     void showProgressBar();
 

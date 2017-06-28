@@ -1,18 +1,29 @@
 package com.tomaszstankowski.trainingapplication.photo_save;
 
-import android.app.Activity;
+
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.tomaszstankowski.trainingapplication.Config;
+import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
+import com.tomaszstankowski.trainingapplication.event.TempImageFileTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
+import com.tomaszstankowski.trainingapplication.util.FileUtil;
 import com.tomaszstankowski.trainingapplication.util.ImageManager;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 /**
@@ -20,66 +31,75 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInteractor.OnPhotoSaveListener {
-    private static final String TEMP_IMAGE_PATH = "TEMP_IMAGE_PATH";
-    private static final String IMAGE_URI = "IMAGE_URI";
-    private static final String PHOTO = "PHOTO";
-
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private PhotoSaveInteractor mInteractor;
     private ImageManager mManager;
+    private FileUtil mFileUtil;
     private PhotoSaveView mView;
     private Photo mPhoto;
+    private File mTempImageFile;
 
     @Inject
-    PhotoSavePresenterImpl(PhotoSaveInteractor interactor, ImageManager manager) {
+    PhotoSavePresenterImpl(PhotoSaveInteractor interactor, ImageManager manager, FileUtil fileUtil) {
         mInteractor = interactor;
         mManager = manager;
+        mFileUtil = fileUtil;
     }
 
     @Override
     public void onCreateView(PhotoSaveView view) {
         mView = view;
-        Activity activity = mView.getActivityContext();
-        Photo photo = activity.getIntent().getParcelableExtra(PHOTO);
-        //null if photo has just been captured
-        if (photo != null) {
-            mPhoto = photo;
-            Uri image = activity.getIntent().getParcelableExtra(IMAGE_URI);
-            mView.updateView(photo.title, photo.desc, image, false);
-        } else {
-            //make sure previous photo not there
-            mPhoto = null;
-            String path = activity.getIntent().getStringExtra(TEMP_IMAGE_PATH);
-            Uri image = mManager.getImageUriFromFile(new File(path));
-            mView.updateView(null, null, image, true);
-        }
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onDestroyView() {
         mView = null;
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onPhotoEditEvent(PhotoTransferEvent event) {
+        if (event.requestCode == Config.RC_PHOTO_SAVE) {
+            mPhoto = event.photo;
+            Uri image = event.image;
+            mView.updateView(mPhoto.title, mPhoto.desc, image, false);
+            EventBus.getDefault().removeStickyEvent(event);
+        }
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onPhotoSaveEvent(TempImageFileTransferEvent event) {
+        if (event.requestCode == Config.RC_PHOTO_SAVE) {
+            mPhoto = null;
+            mTempImageFile = event.file;
+            Uri image = mFileUtil.getUriFromFile(mTempImageFile);
+            mView.updateView(null, null, image, true);
+            EventBus.getDefault().removeStickyEvent(event);
+        }
     }
 
     @Override
     public void onSaveButtonClicked(String title, String desc) {
-        Activity activity = mView.getActivityContext();
         //saving captured photo
         if (mPhoto == null) {
-            String path = activity.getIntent().getStringExtra(TEMP_IMAGE_PATH);
             FirebaseUser firebaseUser = mAuth.getCurrentUser();
             if (firebaseUser != null) {
                 mPhoto = new Photo(title, desc, firebaseUser.getUid());
-                new AsyncTask<String, Void, Uri>() {
-                    @Override
-                    protected Uri doInBackground(String... params) {
-                        return mManager.compressImage(params[0]);
-                    }
-
-                    @Override
-                    protected void onPostExecute(Uri result) {
-                        mInteractor.savePhoto(mPhoto, result, PhotoSavePresenterImpl.this);
-                    }
-                }.execute(path);
+                Single.fromCallable(() -> {
+                    File compressedImageFile = mManager.compressImage(mTempImageFile);
+                    return Uri.fromFile(compressedImageFile);
+                })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                imageUri -> mInteractor.savePhoto(
+                                        mPhoto,
+                                        imageUri,
+                                        PhotoSavePresenterImpl.this
+                                ),
+                                throwable -> onSaveError()
+                        );
             } else {
                 onSaveError();
             }
@@ -102,13 +122,7 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
     @Override
     public void onSaveSuccess() {
         if (mView != null) {
-            Activity activity = mView.getActivityContext();
-            if (activity.getParent() == null) {
-                activity.setResult(Activity.RESULT_OK);
-            } else {
-                activity.getParent().setResult(Activity.RESULT_OK);
-            }
-            mView.finish();
+            mView.finish(Config.PHOTO_SAVE_OK);
         }
     }
 
@@ -116,7 +130,7 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
     public void onSaveError() {
         if (mView != null) {
             mView.showMessage(PhotoSaveView.Message.ERROR);
-            mView.finish();
+            mView.finish(Config.PHOTO_SAVE_ERROR);
         }
     }
 }

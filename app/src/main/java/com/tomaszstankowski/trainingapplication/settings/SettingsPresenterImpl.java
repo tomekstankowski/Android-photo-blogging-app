@@ -1,13 +1,10 @@
 package com.tomaszstankowski.trainingapplication.settings;
 
 
-import android.content.Intent;
-
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.tomaszstankowski.trainingapplication.login.LoginActivity;
+import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.model.User;
 
 import javax.inject.Inject;
@@ -39,17 +36,13 @@ public class SettingsPresenterImpl implements SettingsPresenter,
 
     @Override
     public void onLogOutButtonClicked() {
-        AuthUI.getInstance()
-                .signOut(mView.getActivity())
-                .addOnCompleteListener(task -> {
-                    if (mView != null) {
-                        Intent intent = new Intent(mView.getActivity(), LoginActivity.class);
-                        intent.putExtra(LoginActivity.REQUEST_CODE, LoginActivity.REQUEST_CODE_LOGGED_OUT);
-                        mView.getActivity().startActivityForResult(
-                                intent,
-                                LoginActivity.REQUEST_CODE_LOGGED_OUT);
-                    }
-                });
+        mView.startLogOutUI();
+    }
+
+    @Override
+    public void onLogOutCompleted() {
+        if (mView != null)
+            mView.startLoginView(Config.LOGIN_VIEW_MODE_LOGGED_OUT);
     }
 
     @Override

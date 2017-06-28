@@ -1,6 +1,6 @@
 package com.tomaszstankowski.trainingapplication.photo_details;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
+import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
 
 import javax.inject.Inject;
 
@@ -67,6 +68,18 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPresenter.onDestroyView();
+    }
+
+    @Override
+    public void startPhotoSaveView() {
+        Intent intent = new Intent(this, PhotoSaveActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
     public void updatePhotoView(String title, String desc, String date, Uri image) {
         mImage.setImageURI(image);
         mTitleTv.setText(title);
@@ -81,11 +94,6 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
             mEditBttn.setVisibility(View.VISIBLE);
             mRemoveBttn.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    public Activity getActivityContext() {
-        return this;
     }
 
     @Override

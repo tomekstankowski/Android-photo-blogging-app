@@ -1,9 +1,9 @@
 package com.tomaszstankowski.trainingapplication;
 
+import com.tomaszstankowski.trainingapplication.home.HomeInteractor;
+import com.tomaszstankowski.trainingapplication.home.HomeInteractorImpl;
 import com.tomaszstankowski.trainingapplication.login.LoginInteractor;
 import com.tomaszstankowski.trainingapplication.login.LoginInteractorImpl;
-import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureInteractor;
-import com.tomaszstankowski.trainingapplication.photo_capture.PhotoCaptureInteractorImpl;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsInteractor;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsInteractorImpl;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveInteractor;
@@ -19,11 +19,11 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class InteractorModule {
+class InteractorModule {
 
     @Provides
     @Singleton
-    PhotoCaptureInteractor providesPhotoCaptureInteractor(PhotoCaptureInteractorImpl impl) {
+    HomeInteractor providesPhotoCaptureInteractor(HomeInteractorImpl impl) {
         return impl;
     }
 

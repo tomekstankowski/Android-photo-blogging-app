@@ -1,15 +1,17 @@
 package com.tomaszstankowski.trainingapplication.photo_details;
 
-
-import android.content.Intent;
 import android.net.Uri;
-import android.os.Parcelable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.tomaszstankowski.trainingapplication.Config;
+import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.model.User;
-import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,9 +20,6 @@ import javax.inject.Singleton;
 public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
         PhotoDetailsInteractor.OnPhotoChangeListener, PhotoDetailsInteractor.OnPhotoRemoveListener,
         PhotoDetailsInteractor.OnUserFetchListener {
-
-    private static final String PHOTO = "PHOTO";
-    private static final String IMAGE_URI = "IMAGE_URI";
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private PhotoDetailsInteractor mInteractor;
@@ -36,27 +35,34 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
     @Override
     public void onCreateView(PhotoDetailsView view) {
         mView = view;
-
-        Intent intent = mView.getActivityContext().getIntent();
-        mPhoto = intent.getParcelableExtra(PHOTO);
-        mImage = intent.getParcelableExtra(IMAGE_URI);
-
-        mInteractor.observePhoto(mPhoto.key, this);
-        onPhotoChange(mPhoto);
-
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        if (firebaseUser != null && firebaseUser.getUid().equals(mPhoto.userKey)) {
-            //current user is an author of the photo, we can get it's name right now
-            mView.updateAuthorView(firebaseUser.getDisplayName(), true);
-        } else {
-            mInteractor.getUser(mPhoto.userKey, this);
-        }
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onDestroyView() {
         mView = null;
+        EventBus.getDefault().unregister(this);
         mInteractor.stopObservingPhoto();
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    public void onPhotoTransferEvent(PhotoTransferEvent event) {
+        if (event.requestCode == Config.RC_PHOTO_DETAILS) {
+            mPhoto = event.photo;
+            mImage = event.image;
+            mInteractor.observePhoto(mPhoto.key, this);
+            onPhotoChange(mPhoto);
+
+            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+            if (firebaseUser != null && firebaseUser.getUid().equals(mPhoto.userKey)) {
+                //current user is an author of the photo, we can get it's name right now
+                mView.updateAuthorView(firebaseUser.getDisplayName(), true);
+            } else {
+                mInteractor.getUser(mPhoto.userKey, this);
+            }
+
+            EventBus.getDefault().removeStickyEvent(event);
+        }
     }
 
     @Override
@@ -100,10 +106,10 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
 
     @Override
     public void onEditButtonClicked() {
-        Intent intent = new Intent(mView.getActivityContext(), PhotoSaveActivity.class);
-        intent.putExtra(PHOTO, (Parcelable) mPhoto);
-        intent.putExtra(IMAGE_URI, mImage);
-        mView.startActivity(intent);
+        mView.startPhotoSaveView();
+        EventBus.getDefault().postSticky(new PhotoTransferEvent(
+                mPhoto, mImage, Config.RC_PHOTO_SAVE)
+        );
     }
 
     @Override

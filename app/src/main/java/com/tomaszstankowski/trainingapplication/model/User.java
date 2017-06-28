@@ -1,8 +1,5 @@
 package com.tomaszstankowski.trainingapplication.model;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -24,7 +21,7 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(@NonNull String name, @NonNull String key, @Nullable String email) {
+    public User(String name, String key, String email) {
         this.name = name;
         this.key = key;
         this.email = email;

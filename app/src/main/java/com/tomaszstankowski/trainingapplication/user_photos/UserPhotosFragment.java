@@ -1,5 +1,6 @@
 package com.tomaszstankowski.trainingapplication.user_photos;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
+import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
 import com.tomaszstankowski.trainingapplication.ui.GalleryViewAdapter;
 
 import javax.inject.Inject;
@@ -35,6 +37,8 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     ProgressBar mProgressBar;
     @BindView(R.id.fragment_user_photos_textview_username)
     TextView mUsernameTv;
+    @BindView(R.id.fragment_user_photos_textview_photos_count)
+    TextView mPhotosCountTv;
 
     private GalleryViewAdapter mAdapter;
     private Unbinder mUnbinder;
@@ -61,6 +65,7 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
         mAdapter = new GalleryViewAdapter(getActivity());
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
+        updatePhotosCount();
         mPresenter.onCreateView(this);
     }
 
@@ -72,6 +77,12 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     }
 
     @Override
+    public void startPhotoDetailsView() {
+        Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
     public void onItemClick(View view, int position) {
         mPresenter.onPhotoClicked(position);
     }
@@ -79,20 +90,27 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     @Override
     public void addPhoto(Uri uri) {
         mAdapter.addItem(uri);
+        updatePhotosCount();
     }
 
     @Override
     public void removePhoto(int position) {
         mAdapter.removeItem(position);
+        updatePhotosCount();
     }
 
     @Override
     public void removeAllPhotos() {
         mAdapter.removeAllItems();
+        updatePhotosCount();
     }
 
     @Override
-    public void updateUserView(String username) {
-        mUsernameTv.setText(username + "'s photos");
+    public void updateUsername(String username) {
+        mUsernameTv.setText(username);
+    }
+
+    private void updatePhotosCount() {
+        mPhotosCountTv.setText(getString(R.string.photos_count) + " " + mAdapter.getItemCount());
     }
 }

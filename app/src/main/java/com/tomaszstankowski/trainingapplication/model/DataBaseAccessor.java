@@ -45,6 +45,10 @@ public class DataBaseAccessor {
         return mDatabase.getReference("photos").child(key);
     }
 
+    public Query getRecentPhotos() {
+        return mDatabase.getReference("photos").orderByKey();
+    }
+
     public Query getUserLastPhoto(String userKey) {
         return mDatabase.getReference("users").child(userKey).child("photos").orderByKey().limitToLast(1);
     }

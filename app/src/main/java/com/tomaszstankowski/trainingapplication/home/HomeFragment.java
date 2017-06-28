@@ -1,4 +1,4 @@
-package com.tomaszstankowski.trainingapplication.photo_capture;
+package com.tomaszstankowski.trainingapplication.home;
 
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
@@ -6,6 +6,7 @@ import android.animation.AnimatorSet;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,14 @@ import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.tomaszstankowski.trainingapplication.App;
+import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.R;
+import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
+import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
+import com.tomaszstankowski.trainingapplication.util.CameraException;
+import com.tomaszstankowski.trainingapplication.util.FileUtil;
+
+import java.io.File;
 
 import javax.inject.Inject;
 
@@ -30,13 +38,18 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-/**
- * Fragment allowing to quickly capture photo and then save it.
- */
+import static android.app.Activity.RESULT_OK;
 
-public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
+/**
+ * Fragment allows to quickly capture photo and then save it.
+ * Last photo taken by user is displayed here
+ */
+public class HomeFragment extends Fragment implements HomeView {
     @Inject
-    PhotoCapturePresenter mPresenter;
+    HomePresenter mPresenter;
+
+    @Inject
+    FileUtil mFileUtil;
 
     @BindView(R.id.fragment_photo_capture_button)
     Button mCaptureButton;
@@ -91,13 +104,42 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
     }
 
     @Override
-    public void showMessage(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+    public void startSystemCamera(File targetFile) throws CameraException {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (targetFile != null
+                && takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            Uri targetUri = mFileUtil.getUriFromFile(targetFile);
+            if (targetUri != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, targetUri);
+                startActivityForResult(takePictureIntent, Config.RC_CAMERA_CAPTURE);
+                return;
+            }
+        }
+        throw new CameraException();
     }
 
-    /**
-     * Called when user successfully saved a photo or in onCreateView() if last photo exists
-     */
+    @Override
+    public void startPhotoDetailsView() {
+        Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void startPhotoSaveView() {
+        Intent intent = new Intent(getActivity(), PhotoSaveActivity.class);
+        startActivityForResult(intent, Config.RC_PHOTO_SAVE);
+    }
+
+    @Override
+    public void showMessage(Message message) {
+        switch (message) {
+            case CAMERA_ERROR:
+                Toast.makeText(getActivity(), R.string.camera_error, Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
+
+
     @Override
     public void updateView(Uri imageUri) {
         mLabel.setVisibility(View.VISIBLE);
@@ -120,17 +162,21 @@ public class PhotoCaptureFragment extends Fragment implements PhotoCaptureView {
         mImage.setVisibility(View.GONE);
     }
 
-    /**
-     * Results from System Camera and PhotoSaveActivity
-     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPresenter.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Config.RC_CAMERA_CAPTURE) {
+            //presenter does not know android result codes - we need to translate it
+            if (resultCode == RESULT_OK)
+                mPresenter.onSystemCameraResult(Config.CAMERA_RESULT_OK);
+            else
+                mPresenter.onSystemCameraResult(Config.CAMERA_RESULT_ERROR);
+        }
+        if (requestCode == Config.RC_PHOTO_SAVE) {
+            mPresenter.onPhotoSaveViewResult(resultCode);
+        }
     }
 
-    /**
-     * Called in onResume()
-     */
     private void animateCaptureButton() {
         Animator slideDown = AnimatorInflater.loadAnimator(getActivity(), R.animator.slide_from_top);
         Animator fadeIn = AnimatorInflater.loadAnimator(getActivity(), R.animator.fade_in);

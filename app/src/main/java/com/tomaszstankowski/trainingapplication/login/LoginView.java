@@ -1,6 +1,6 @@
 package com.tomaszstankowski.trainingapplication.login;
 
-import android.content.Intent;
+import com.firebase.ui.auth.AuthUI;
 
 
 public interface LoginView {
@@ -10,7 +10,7 @@ public interface LoginView {
         SIGN_IN_REQUIRED
     }
 
-    void startActivityForResult(Intent intent, int requestCode);
+    void startAuthUI(AuthUI.SignInIntentBuilder builder);
 
     void showLoggedOutView();
 
@@ -19,8 +19,6 @@ public interface LoginView {
     void showProgressbar();
 
     void hideProgressbar();
-
-    int getThemeId();
 
     void finish(int resultCode);
 }

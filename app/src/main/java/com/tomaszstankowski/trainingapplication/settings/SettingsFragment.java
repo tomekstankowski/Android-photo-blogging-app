@@ -1,5 +1,6 @@
 package com.tomaszstankowski.trainingapplication.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,8 +11,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
 import com.tomaszstankowski.trainingapplication.App;
+import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.R;
+import com.tomaszstankowski.trainingapplication.login.LoginActivity;
 
 import javax.inject.Inject;
 
@@ -67,6 +71,22 @@ public class SettingsFragment extends Fragment implements SettingsView {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mPresenter.onCreateView(this);
+    }
+
+    @Override
+    public void startLogOutUI() {
+        AuthUI.getInstance()
+                .signOut(getActivity())
+                .addOnCompleteListener(task -> mPresenter.onLogOutCompleted());
+    }
+
+    @Override
+    public void startLoginView(int mode) {
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        intent.putExtra(Config.LOGIN_VIEW_MODE, mode);
+        getActivity().startActivityForResult(
+                intent,
+                Config.RC_LOGIN);
     }
 
     @Override

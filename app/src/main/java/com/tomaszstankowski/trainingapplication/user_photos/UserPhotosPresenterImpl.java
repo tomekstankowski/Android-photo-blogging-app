@@ -1,14 +1,14 @@
 package com.tomaszstankowski.trainingapplication.user_photos;
 
-
-import android.content.Intent;
 import android.net.Uri;
-import android.os.Parcelable;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.tomaszstankowski.trainingapplication.Config;
+import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
-import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,8 +22,6 @@ import javax.inject.Singleton;
 
 @Singleton
 public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosInteractor.OnUserPhotosChangesListener {
-    private static final String PHOTO = "PHOTO";
-    private static final String IMAGE_URI = "IMAGE_URI";
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private UserPhotosView mView;
@@ -42,7 +40,7 @@ public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosI
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         if (firebaseUser != null) {
             mInteractor.observeUserPhotos(firebaseUser.getUid(), this);
-            mView.updateUserView(firebaseUser.getDisplayName());
+            mView.updateUsername(firebaseUser.getDisplayName());
         }
     }
 
@@ -56,12 +54,12 @@ public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosI
 
     @Override
     public void onPhotoClicked(int position) {
-        Photo clicked = mPhotos.get(position);
-        Uri image = mImages.get(clicked.key);
-        Intent intent = new Intent(mView.getContext(), PhotoDetailsActivity.class);
-        intent.putExtra(PHOTO, (Parcelable) clicked);
-        intent.putExtra(IMAGE_URI, image);
-        mView.startActivity(intent);
+        Photo photo = mPhotos.get(position);
+        Uri image = mImages.get(photo.key);
+        mView.startPhotoDetailsView();
+        EventBus.getDefault().postSticky(
+                new PhotoTransferEvent(photo, image, Config.RC_PHOTO_DETAILS)
+        );
     }
 
     @Override

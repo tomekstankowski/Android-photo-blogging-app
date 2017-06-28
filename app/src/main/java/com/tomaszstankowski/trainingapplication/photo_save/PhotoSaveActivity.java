@@ -1,6 +1,5 @@
 package com.tomaszstankowski.trainingapplication.photo_save;
 
-import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,7 +31,6 @@ import butterknife.OnClick;
  */
 
 public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveView {
-    public static final int REQUEST_CODE = 333;
     @Inject
     PhotoSavePresenter mPresenter;
 
@@ -77,17 +75,13 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
     }
 
     @Override
-    public void updateView(@Nullable String title, @Nullable String desc, @NonNull Uri imageUri, boolean resize) {
+    public void updateView(@Nullable String title, @Nullable String desc, @NonNull Uri imageUri,
+                           boolean resize) {
         setImage(imageUri, resize);
         if (title != null)
             mTitle.setText(title);
         if (desc != null)
             mDesc.setText(desc);
-    }
-
-    @Override
-    public Activity getActivityContext() {
-        return this;
     }
 
     private void setImage(Uri uri, boolean resize) {
@@ -112,11 +106,16 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
                 Toast.makeText(this, R.string.save_error, Toast.LENGTH_SHORT).show();
                 break;
         }
-
     }
 
     @Override
     public void showProgressBar() {
         mProgressBar.setVisibility(android.view.View.VISIBLE);
+    }
+
+    @Override
+    public void finish(int resultCode) {
+        setResult(resultCode);
+        finish();
     }
 }

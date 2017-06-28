@@ -1,4 +1,4 @@
-package com.tomaszstankowski.trainingapplication.photo_capture;
+package com.tomaszstankowski.trainingapplication.home;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -13,14 +13,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class PhotoCaptureInteractorImpl implements PhotoCaptureInteractor, ChildEventListener {
+public class HomeInteractorImpl implements HomeInteractor, ChildEventListener {
     private DataBaseAccessor mDataAccessor;
     private StorageAccessor mStorageAccessor;
     private Query mQuery;
     private OnLastPhotoChangeListener mListener;
 
     @Inject
-    PhotoCaptureInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor) {
+    HomeInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor) {
         mDataAccessor = dataBaseAccessor;
         mStorageAccessor = storageAccessor;
     }
