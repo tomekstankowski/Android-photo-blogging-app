@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.R;
+import com.tomaszstankowski.trainingapplication.discover.DiscoverFragment;
 import com.tomaszstankowski.trainingapplication.home.HomeFragment;
 import com.tomaszstankowski.trainingapplication.login.LoginActivity;
 import com.tomaszstankowski.trainingapplication.settings.SettingsFragment;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     fragment = new HomeFragment();
                     break;
                 case R.id.activity_main_menu_discover:
-                    //// TODO: 4/14/2017
+                    fragment = new DiscoverFragment();
                     break;
                 case R.id.activity_main_menu_my_profile:
                     fragment = new UserPhotosFragment();

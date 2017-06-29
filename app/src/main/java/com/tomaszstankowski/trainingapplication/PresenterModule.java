@@ -1,5 +1,7 @@
 package com.tomaszstankowski.trainingapplication;
 
+import com.tomaszstankowski.trainingapplication.discover.DiscoverPresenter;
+import com.tomaszstankowski.trainingapplication.discover.DiscoverPresenterImpl;
 import com.tomaszstankowski.trainingapplication.home.HomePresenter;
 import com.tomaszstankowski.trainingapplication.home.HomePresenterImpl;
 import com.tomaszstankowski.trainingapplication.login.LoginPresenter;
@@ -36,7 +38,13 @@ class PresenterModule {
 
     @Provides
     @Singleton
-    HomePresenter providesPhotoCapturePresenter(HomePresenterImpl impl) {
+    HomePresenter providesHomePresenter(HomePresenterImpl impl) {
+        return impl;
+    }
+
+    @Provides
+    @Singleton
+    DiscoverPresenter providesDiscoverPresenter(DiscoverPresenterImpl impl) {
         return impl;
     }
 

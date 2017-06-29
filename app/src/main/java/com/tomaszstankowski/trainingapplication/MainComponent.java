@@ -1,5 +1,6 @@
 package com.tomaszstankowski.trainingapplication;
 
+import com.tomaszstankowski.trainingapplication.discover.DiscoverFragment;
 import com.tomaszstankowski.trainingapplication.home.HomeFragment;
 import com.tomaszstankowski.trainingapplication.login.LoginActivity;
 import com.tomaszstankowski.trainingapplication.main.MainActivity;
@@ -31,6 +32,8 @@ public interface MainComponent {
     void inject(PhotoSaveActivity activity);
 
     void inject(HomeFragment fragment);
+
+    void inject(DiscoverFragment fragment);
 
     void inject(UserPhotosFragment fragment);
 

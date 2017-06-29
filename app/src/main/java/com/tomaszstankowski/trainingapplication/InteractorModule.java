@@ -1,5 +1,7 @@
 package com.tomaszstankowski.trainingapplication;
 
+import com.tomaszstankowski.trainingapplication.discover.DiscoverInteractor;
+import com.tomaszstankowski.trainingapplication.discover.DiscoverInteractorImpl;
 import com.tomaszstankowski.trainingapplication.home.HomeInteractor;
 import com.tomaszstankowski.trainingapplication.home.HomeInteractorImpl;
 import com.tomaszstankowski.trainingapplication.login.LoginInteractor;
@@ -23,7 +25,13 @@ class InteractorModule {
 
     @Provides
     @Singleton
-    HomeInteractor providesPhotoCaptureInteractor(HomeInteractorImpl impl) {
+    HomeInteractor providesHomeInteractor(HomeInteractorImpl impl) {
+        return impl;
+    }
+
+    @Provides
+    @Singleton
+    DiscoverInteractor providesDiscoverInteractor(DiscoverInteractorImpl impl) {
         return impl;
     }
 
