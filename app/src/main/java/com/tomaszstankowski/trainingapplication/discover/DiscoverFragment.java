@@ -1,7 +1,6 @@
 package com.tomaszstankowski.trainingapplication.discover;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
@@ -71,8 +71,8 @@ public class DiscoverFragment extends Fragment implements DiscoverView,
     }
 
     @Override
-    public void addPhoto(Uri uri) {
-        mAdapter.addItem(uri);
+    public void addPhoto(StorageReference image) {
+        mAdapter.addItem(image);
     }
 
     @Override

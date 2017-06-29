@@ -4,8 +4,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.model.DataBaseAccessor;
 import com.tomaszstankowski.trainingapplication.model.Photo;
+import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
 import com.tomaszstankowski.trainingapplication.model.User;
 
 import javax.inject.Inject;
@@ -14,10 +16,12 @@ import javax.inject.Singleton;
 @Singleton
 public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor, ValueEventListener {
     private DataBaseAccessor mDataAccessor;
+    private StorageAccessor mStorageAccessor;
 
     @Inject
-    PhotoDetailsInteractorImpl(DataBaseAccessor dataBaseAccessor) {
+    PhotoDetailsInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor) {
         mDataAccessor = dataBaseAccessor;
+        mStorageAccessor = storageAccessor;
     }
 
     private DatabaseReference mPhotoRef;
@@ -38,7 +42,11 @@ public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor, Value
 
     @Override
     public void removePhoto(Photo photo, OnPhotoRemoveListener listener) {
-        mDataAccessor.removePhoto(photo).addOnSuccessListener(aVoid -> listener.onPhotoRemoveSuccess())
+        mDataAccessor.removePhoto(photo)
+                .addOnSuccessListener(aVoid -> mStorageAccessor.removeImage(photo.key)
+                        .addOnSuccessListener(aVoid1 -> listener.onPhotoRemoveSuccess())
+                        .addOnFailureListener(e -> listener.onPhotoRemoveFailure())
+                )
                 .addOnFailureListener(e -> listener.onPhotoRemoveFailure());
     }
 
@@ -76,5 +84,10 @@ public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor, Value
                 listener.onUserFetchFailure();
             }
         });
+    }
+
+    @Override
+    public StorageReference getImage(Photo photo) {
+        return mStorageAccessor.getImage(photo.key);
     }
 }

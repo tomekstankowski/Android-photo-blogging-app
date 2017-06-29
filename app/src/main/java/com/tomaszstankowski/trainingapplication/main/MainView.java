@@ -1,6 +1,6 @@
 package com.tomaszstankowski.trainingapplication.main;
 
-public interface MainView {
+interface MainView {
 
     void startLoginView(int mode);
 

@@ -3,7 +3,7 @@ package com.tomaszstankowski.trainingapplication.login;
 import com.firebase.ui.auth.AuthUI;
 
 
-public interface LoginView {
+interface LoginView {
     enum Message {
         NO_NETWORK,
         ERROR,

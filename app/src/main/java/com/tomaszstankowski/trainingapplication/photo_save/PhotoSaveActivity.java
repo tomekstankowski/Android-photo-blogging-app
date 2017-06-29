@@ -1,23 +1,20 @@
 package com.tomaszstankowski.trainingapplication.photo_save;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
+
+import java.io.File;
 
 import javax.inject.Inject;
 
@@ -41,7 +38,7 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
     @BindView(R.id.activity_photo_save_edittext_desc)
     EditText mDesc;
     @BindView(R.id.activity_photo_save_imageview_photo)
-    SimpleDraweeView mImage;
+    ImageView mImageView;
     @BindView(R.id.activity_photo_save_button_back)
     Button mBackButton;
     @BindView(R.id.activity_photo_save_button_save)
@@ -75,28 +72,29 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
     }
 
     @Override
-    public void updateView(@Nullable String title, @Nullable String desc, @NonNull Uri imageUri,
-                           boolean resize) {
-        setImage(imageUri, resize);
-        if (title != null)
-            mTitle.setText(title);
-        if (desc != null)
-            mDesc.setText(desc);
+    public void updateEditable(String title, String desc) {
+        mTitle.setText(title);
+        mDesc.setText(desc);
     }
 
-    private void setImage(Uri uri, boolean resize) {
-        if (resize) {
-            int width = 50, height = 50;
-            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(uri)
-                    .setResizeOptions(new ResizeOptions(width, height))
-                    .build();
-            DraweeController controller = Fresco.newDraweeControllerBuilder()
-                    .setOldController(mImage.getController())
-                    .setImageRequest(request)
-                    .build();
-            mImage.setController(controller);
-        } else
-            mImage.setImageURI(uri);
+    @Override
+    public void showImage(File imageFile) {
+        Glide.with(this)
+                .fromFile()
+                .load(imageFile)
+                .centerCrop()
+                .placeholder(R.color.colorPrimary)
+                .into(mImageView);
+    }
+
+    @Override
+    public void showImage(StorageReference image) {
+        Glide.with(this)
+                .using(new FirebaseImageLoader())
+                .load(image)
+                .centerCrop()
+                .placeholder(R.color.colorPrimary)
+                .into(mImageView);
     }
 
     @Override

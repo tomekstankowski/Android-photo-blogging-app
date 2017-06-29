@@ -1,9 +1,7 @@
-# Sample App
-## MVP, dagger2, firebase, Butterknife, Fresco.
+# Sample Android photo-blogging app
+## MVP, Dagger2, Firebase(Database, Storage, Auth).
 
-Application  will allow user to take a photo through the
-app, add some information about it and save data in 
-Firebase Database and compressed image in Firebase Storage.
-User can browse his and other users photos, remove or
-edit his photos.
-User authentication might also be provided.
+Application allows to sign up using email address. 
+User can capture a photo using system camera, 
+add title and desc and then save it in database.
+User can also browse and edit his photos or browse others photos.

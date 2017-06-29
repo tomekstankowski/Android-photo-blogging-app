@@ -26,6 +26,7 @@
     <string name="remove">Remove</string>
     <string name="title">Title</string>
     <string name="desc">Description</string>
+    <string name="photo">Photo</string>
     <string name="last_photo">Your last photo</string>
     <!-->FirebaseUI override<-->
     <string name="name_hint" translation_description="Hint for name input field">Username</string>

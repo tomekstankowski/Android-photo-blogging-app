@@ -1,9 +1,8 @@
 package com.tomaszstankowski.trainingapplication.user_photos;
 
-import android.net.Uri;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
@@ -11,7 +10,6 @@ import com.tomaszstankowski.trainingapplication.model.Photo;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +25,7 @@ public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosI
     private UserPhotosView mView;
     private UserPhotosInteractor mInteractor;
     private List<Photo> mPhotos = new ArrayList<>();
-    private Map<String, Uri> mImages = new HashMap<>();
+    private Map<String, StorageReference> mImages = new HashMap<>();
 
     @Inject
     UserPhotosPresenterImpl(UserPhotosInteractor interactor) {
@@ -55,25 +53,19 @@ public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosI
     @Override
     public void onPhotoClicked(int position) {
         Photo photo = mPhotos.get(position);
-        Uri image = mImages.get(photo.key);
         mView.startPhotoDetailsView();
         EventBus.getDefault().postSticky(
-                new PhotoTransferEvent(photo, image, Config.RC_PHOTO_DETAILS)
+                new PhotoTransferEvent(photo, Config.RC_PHOTO_DETAILS)
         );
     }
 
     @Override
-    public void onPhotoAdded(Photo photo, Uri image) {
+    public void onPhotoAdded(Photo photo, StorageReference image) {
         if (mImages.containsKey(photo.key))
             return;
         mPhotos.add(photo);
         mImages.put(photo.key, image);
-        Collections.sort(mPhotos, (p1, p2) -> p1.date.compareTo(p2.date));
-        if (mView != null) {
-            mView.removeAllPhotos();
-            for (Photo p : mPhotos)
-                mView.addPhoto(mImages.get(p.key));
-        }
+        mView.addPhoto(image);
     }
 
     @Override

@@ -1,23 +1,23 @@
 package com.tomaszstankowski.trainingapplication.photo_save;
 
-import android.net.Uri;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
 
 /**
  * Interface implemented by PhotoSaveActivity
  */
 
-public interface PhotoSaveView{
+interface PhotoSaveView {
     enum Message {
         ERROR
     }
 
-    /**
-     * @param title    is null when photo was just captured
-     * @param desc     is null when photo was just captured
-     * @param imageUri is uri of just captured uncompressed image or image downloaded from storage
-     * @param resize   is true when image is uncompressed and false otherwise
-     */
-    void updateView(String title, String desc, Uri imageUri, boolean resize);
+    void updateEditable(String title, String desc);
+
+    void showImage(File imageFile);
+
+    void showImage(StorageReference image);
 
     void showMessage(Message message);
 

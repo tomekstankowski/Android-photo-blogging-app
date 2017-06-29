@@ -1,9 +1,8 @@
 package com.tomaszstankowski.trainingapplication.photo_details;
 
-import android.net.Uri;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
@@ -25,7 +24,7 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
     private PhotoDetailsInteractor mInteractor;
     private PhotoDetailsView mView;
     private Photo mPhoto;
-    private Uri mImage;
+    private StorageReference mImage;
 
     @Inject
     PhotoDetailsPresenterImpl(PhotoDetailsInteractor interactor) {
@@ -49,8 +48,8 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
     public void onPhotoTransferEvent(PhotoTransferEvent event) {
         if (event.requestCode == Config.RC_PHOTO_DETAILS) {
             mPhoto = event.photo;
-            mImage = event.image;
             mInteractor.observePhoto(mPhoto.key, this);
+            mImage = mInteractor.getImage(mPhoto);
             onPhotoChange(mPhoto);
 
             FirebaseUser firebaseUser = mAuth.getCurrentUser();
@@ -108,7 +107,7 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
     public void onEditButtonClicked() {
         mView.startPhotoSaveView();
         EventBus.getDefault().postSticky(new PhotoTransferEvent(
-                mPhoto, mImage, Config.RC_PHOTO_SAVE)
+                mPhoto, Config.RC_PHOTO_SAVE)
         );
     }
 

@@ -1,10 +1,11 @@
 package com.tomaszstankowski.trainingapplication.model;
 
-import android.net.Uri;
-
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.io.InputStream;
 
 import javax.inject.Inject;
 
@@ -19,11 +20,15 @@ public class StorageAccessor {
     public StorageAccessor() {
     }
 
-    public Task<Uri> getImageUri(Photo photo) {
-        return mStorage.getReference("images").child(photo.key).getDownloadUrl();
+    public StorageReference getImage(String name) {
+        return mStorage.getReference("images").child(name);
     }
 
-    public UploadTask saveImage(Photo photo, Uri uri) {
-        return mStorage.getReference("images").child(photo.key).putFile(uri);
+    public UploadTask saveImage(String name, InputStream inputStream) {
+        return mStorage.getReference("images").child(name).putStream(inputStream);
+    }
+
+    public Task<Void> removeImage(String name) {
+        return mStorage.getReference("images").child(name).delete();
     }
 }

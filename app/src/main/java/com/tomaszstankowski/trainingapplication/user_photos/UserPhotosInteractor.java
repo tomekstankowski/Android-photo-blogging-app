@@ -1,7 +1,6 @@
 package com.tomaszstankowski.trainingapplication.user_photos;
 
-import android.net.Uri;
-
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 
 /**
@@ -10,7 +9,7 @@ import com.tomaszstankowski.trainingapplication.model.Photo;
 
 public interface UserPhotosInteractor {
     interface OnUserPhotosChangesListener {
-        void onPhotoAdded(Photo photo, Uri image);
+        void onPhotoAdded(Photo photo, StorageReference image);
 
         void onPhotoRemoved(String photoKey);
     }

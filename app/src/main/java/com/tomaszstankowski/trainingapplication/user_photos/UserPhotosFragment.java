@@ -1,7 +1,6 @@
 package com.tomaszstankowski.trainingapplication.user_photos;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
@@ -88,20 +88,14 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     }
 
     @Override
-    public void addPhoto(Uri uri) {
-        mAdapter.addItem(uri);
+    public void addPhoto(StorageReference image) {
+        mAdapter.addItem(image);
         updatePhotosCount();
     }
 
     @Override
     public void removePhoto(int position) {
         mAdapter.removeItem(position);
-        updatePhotosCount();
-    }
-
-    @Override
-    public void removeAllPhotos() {
-        mAdapter.removeAllItems();
         updatePhotosCount();
     }
 

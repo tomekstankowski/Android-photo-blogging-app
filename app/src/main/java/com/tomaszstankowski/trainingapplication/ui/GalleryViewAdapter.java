@@ -1,13 +1,16 @@
 package com.tomaszstankowski.trainingapplication.ui;
 
+
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.R;
 
 import java.util.ArrayList;
@@ -18,12 +21,14 @@ import java.util.List;
  */
 
 public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.ViewHolder> {
-    private List<Uri> mImages = new ArrayList<>();
+    private List<StorageReference> mImages = new ArrayList<>();
     private LayoutInflater mInflater;
     private OnItemClickListener mClickListener;
+    private Context mContext;
 
     public GalleryViewAdapter(Context context) {
-        this.mInflater = LayoutInflater.from(context);
+        mInflater = LayoutInflater.from(context);
+        mContext = context;
     }
 
     @Override
@@ -34,7 +39,12 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mImage.setImageURI(mImages.get(position));
+        Glide.with(mContext)
+                .using(new FirebaseImageLoader())
+                .load(mImages.get(position))
+                .centerCrop()
+                .placeholder(R.color.colorPrimary)
+                .into(holder.mImage);
     }
 
     @Override
@@ -42,7 +52,7 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
         return mImages.size();
     }
 
-    public void addItem(Uri item) {
+    public void addItem(StorageReference item) {
         mImages.add(item);
         notifyItemInserted(mImages.size() - 1);
     }
@@ -57,12 +67,12 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
         notifyItemRemoved(position);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public SimpleDraweeView mImage;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView mImage;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
-            mImage = (SimpleDraweeView) itemView.findViewById(R.id.gallery_item_imageview);
+            mImage = (ImageView) itemView.findViewById(R.id.gallery_item_imageview);
             itemView.setOnClickListener(view -> {
                 if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
             });

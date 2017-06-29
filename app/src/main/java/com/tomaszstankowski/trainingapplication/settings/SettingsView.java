@@ -1,7 +1,7 @@
 package com.tomaszstankowski.trainingapplication.settings;
 
 
-public interface SettingsView {
+interface SettingsView {
     enum Message {
         SUCCESS,
         ERROR,

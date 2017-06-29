@@ -1,10 +1,9 @@
 package com.tomaszstankowski.trainingapplication.home;
 
 
-import android.net.Uri;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.event.TempImageFileTransferEvent;
@@ -25,7 +24,6 @@ public class HomePresenterImpl implements HomePresenter, HomeInteractor.OnLastPh
     private ImageManager mManager;
     private HomeInteractor mInteractor;
     private Photo mPhoto;
-    private Uri mImage;
     private File mTempImageFile;
     private HomeView mView;
 
@@ -51,9 +49,8 @@ public class HomePresenterImpl implements HomePresenter, HomeInteractor.OnLastPh
     }
 
     @Override
-    public void onLastPhotoChanged(Photo photo, Uri image) {
+    public void onLastPhotoChanged(Photo photo, StorageReference image) {
         mPhoto = photo;
-        mImage = image;
         if (mView != null) {
             mView.updateView(image);
         }
@@ -62,7 +59,6 @@ public class HomePresenterImpl implements HomePresenter, HomeInteractor.OnLastPh
     @Override
     public void onLastPhotoRemoved() {
         mPhoto = null;
-        mImage = null;
         if (mView != null) {
             mView.clearView();
         }
@@ -91,7 +87,7 @@ public class HomePresenterImpl implements HomePresenter, HomeInteractor.OnLastPh
         if (mPhoto != null) {
             mView.startPhotoDetailsView();
             EventBus.getDefault().postSticky(
-                    new PhotoTransferEvent(mPhoto, mImage, Config.RC_PHOTO_DETAILS)
+                    new PhotoTransferEvent(mPhoto, Config.RC_PHOTO_DETAILS)
             );
         }
     }

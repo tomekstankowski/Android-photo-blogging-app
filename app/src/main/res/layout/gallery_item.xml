@@ -5,8 +5,9 @@
     android:layout_height="100dp"
     android:layout_marginBottom="10dp">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/gallery_item_imageview"
+        android:contentDescription="@string/photo"
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

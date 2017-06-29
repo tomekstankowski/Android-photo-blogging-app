@@ -1,17 +1,16 @@
 package com.tomaszstankowski.trainingapplication.user_photos;
 
-import android.net.Uri;
+
+import com.google.firebase.storage.StorageReference;
 
 /**
  * View layer implemented by UserPhotosFragment
  */
 
-public interface UserPhotosView {
-    void addPhoto(Uri uri);
+interface UserPhotosView {
+    void addPhoto(StorageReference image);
 
     void removePhoto(int position);
-
-    void removeAllPhotos();
 
     void startPhotoDetailsView();
 

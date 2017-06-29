@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/activity_photo_details_image"
+        android:contentDescription="@string/photo"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
@@ -25,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -34,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:textAppearance="@android:style/TextAppearance.Material.Body2"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/activity_photo_details_textview_desc"
@@ -45,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:textAppearance="@android:style/TextAppearance.Material.Title"
         app:layout_constraintBottom_toTopOf="@+id/activity_photo_details_textview_title"
         app:layout_constraintLeft_toLeftOf="parent" />
@@ -55,7 +56,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="1dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:fontFamily="sans-serif-condensed"
         android:textAppearance="@android:style/TextAppearance.Material.Small"
         android:textSize="@dimen/text_small"
@@ -69,7 +70,7 @@
     <Button
         android:id="@+id/activity_photo_details_button_edit"
         style="@style/ButtonSmall"
-        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/edit"
         android:visibility="gone"
@@ -80,8 +81,8 @@
         android:id="@+id/activity_photo_details_button_remove"
         style="@style/ButtonSmall.Red"
         android:layout_marginBottom="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
         android:text="@string/remove"
         android:visibility="gone"

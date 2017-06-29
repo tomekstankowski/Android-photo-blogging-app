@@ -12,15 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.R;
@@ -54,9 +52,9 @@ public class HomeFragment extends Fragment implements HomeView {
     @BindView(R.id.fragment_photo_capture_button)
     Button mCaptureButton;
     @BindView(R.id.fragment_photo_capture_imageview_last_photo)
-    SimpleDraweeView mImage;
+    ImageView mImageView;
     @BindView(R.id.fragment_photo_capture_textview_lastphoto)
-    TextView mLabel;
+    TextView mLabelTv;
 
     @OnClick(R.id.fragment_photo_capture_button)
     public void onCaptureButtonClicked() {
@@ -79,7 +77,7 @@ public class HomeFragment extends Fragment implements HomeView {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_photo_capture, container, false);
+        View v = inflater.inflate(R.layout.fragment_home, container, false);
         mUnbinder = ButterKnife.bind(this, v);
         return v;
     }
@@ -136,30 +134,29 @@ public class HomeFragment extends Fragment implements HomeView {
             case CAMERA_ERROR:
                 Toast.makeText(getActivity(), R.string.camera_error, Toast.LENGTH_LONG).show();
                 break;
+            case LOAD_ERROR:
+                Toast.makeText(getActivity(), R.string.load_error, Toast.LENGTH_LONG).show();
+                break;
         }
     }
 
 
     @Override
-    public void updateView(Uri imageUri) {
-        mLabel.setVisibility(View.VISIBLE);
-        mImage.setVisibility(View.VISIBLE);
-        int width = 50, height = 50;
-        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(imageUri)
-                .setResizeOptions(new ResizeOptions(width, height))
-                .build();
-        DraweeController controller = Fresco.newDraweeControllerBuilder()
-                .setOldController(mImage.getController())
-                .setImageRequest(request)
-                .build();
-        mImage.setController(controller);
-        mImage.setImageURI(imageUri);
+    public void updateView(StorageReference image) {
+        mLabelTv.setVisibility(View.VISIBLE);
+        mImageView.setVisibility(View.VISIBLE);
+        Glide.with(this)
+                .using(new FirebaseImageLoader())
+                .load(image)
+                .centerCrop()
+                .placeholder(R.color.colorPrimary)
+                .into(mImageView);
     }
 
     @Override
     public void clearView() {
-        mLabel.setVisibility(View.GONE);
-        mImage.setVisibility(View.GONE);
+        mLabelTv.setVisibility(View.GONE);
+        mImageView.setVisibility(View.GONE);
     }
 
     @Override

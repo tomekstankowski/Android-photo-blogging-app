@@ -1,16 +1,18 @@
 package com.tomaszstankowski.trainingapplication.photo_details;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
@@ -44,7 +46,7 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     @BindView(R.id.activity_photo_details_button_remove)
     Button mRemoveBttn;
     @BindView(R.id.activity_photo_details_image)
-    SimpleDraweeView mImage;
+    ImageView mImageView;
     @BindView(R.id.activity_photo_details_progressbar)
     ProgressBar mProgressBar;
 
@@ -80,8 +82,13 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     }
 
     @Override
-    public void updatePhotoView(String title, String desc, String date, Uri image) {
-        mImage.setImageURI(image);
+    public void updatePhotoView(String title, String desc, String date, StorageReference image) {
+        Glide.with(this)
+                .using(new FirebaseImageLoader())
+                .load(image)
+                .centerCrop()
+                .placeholder(R.color.colorPrimary)
+                .into(mImageView);
         mTitleTv.setText(title);
         mDescTv.setText(desc);
         mDateTv.setText(date);

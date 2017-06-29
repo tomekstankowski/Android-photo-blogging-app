@@ -1,7 +1,6 @@
 package com.tomaszstankowski.trainingapplication.home;
 
-import android.net.Uri;
-
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 
 /**
@@ -10,7 +9,7 @@ import com.tomaszstankowski.trainingapplication.model.Photo;
 
 public interface HomeInteractor {
     interface OnLastPhotoChangeListener {
-        void onLastPhotoChanged(Photo photo, Uri imageUri);
+        void onLastPhotoChanged(Photo photo, StorageReference image);
 
         void onLastPhotoRemoved();
 

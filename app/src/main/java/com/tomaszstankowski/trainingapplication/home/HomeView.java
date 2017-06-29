@@ -1,8 +1,7 @@
 package com.tomaszstankowski.trainingapplication.home;
 
 
-import android.net.Uri;
-
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.util.CameraException;
 
 import java.io.File;
@@ -11,7 +10,7 @@ import java.io.File;
  * View layer implemented by HomeFragment
  */
 
-public interface HomeView {
+interface HomeView {
 
     enum Message {
         CAMERA_ERROR,
@@ -26,7 +25,7 @@ public interface HomeView {
 
     void showMessage(Message message);
 
-    void updateView(Uri imageUri);
+    void updateView(StorageReference image);
 
     void clearView();
 }

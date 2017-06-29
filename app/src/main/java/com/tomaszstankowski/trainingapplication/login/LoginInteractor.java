@@ -1,13 +1,11 @@
 package com.tomaszstankowski.trainingapplication.login;
 
 
-import android.support.annotation.Nullable;
-
 import com.tomaszstankowski.trainingapplication.model.User;
 
 public interface LoginInteractor {
     interface OnUserFetchListener {
-        void onUserFetchSuccess(@Nullable User user);
+        void onUserFetchSuccess(User user);
 
         void onUserFetchFailure();
     }

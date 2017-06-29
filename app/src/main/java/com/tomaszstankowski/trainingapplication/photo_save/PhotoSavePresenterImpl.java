@@ -1,15 +1,13 @@
 package com.tomaszstankowski.trainingapplication.photo_save;
 
 
-import android.net.Uri;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.event.TempImageFileTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
-import com.tomaszstankowski.trainingapplication.util.FileUtil;
 import com.tomaszstankowski.trainingapplication.util.ImageManager;
 
 import org.greenrobot.eventbus.EventBus;
@@ -17,6 +15,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,16 +33,14 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private PhotoSaveInteractor mInteractor;
     private ImageManager mManager;
-    private FileUtil mFileUtil;
     private PhotoSaveView mView;
     private Photo mPhoto;
     private File mTempImageFile;
 
     @Inject
-    PhotoSavePresenterImpl(PhotoSaveInteractor interactor, ImageManager manager, FileUtil fileUtil) {
+    PhotoSavePresenterImpl(PhotoSaveInteractor interactor, ImageManager manager) {
         mInteractor = interactor;
         mManager = manager;
-        mFileUtil = fileUtil;
     }
 
     @Override
@@ -62,8 +59,9 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
     public void onPhotoEditEvent(PhotoTransferEvent event) {
         if (event.requestCode == Config.RC_PHOTO_SAVE) {
             mPhoto = event.photo;
-            Uri image = event.image;
-            mView.updateView(mPhoto.title, mPhoto.desc, image, false);
+            StorageReference image = mInteractor.getImage(mPhoto);
+            mView.updateEditable(mPhoto.title, mPhoto.desc);
+            mView.showImage(image);
             EventBus.getDefault().removeStickyEvent(event);
         }
     }
@@ -73,8 +71,7 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
         if (event.requestCode == Config.RC_PHOTO_SAVE) {
             mPhoto = null;
             mTempImageFile = event.file;
-            Uri image = mFileUtil.getUriFromFile(mTempImageFile);
-            mView.updateView(null, null, image, true);
+            mView.showImage(mTempImageFile);
             EventBus.getDefault().removeStickyEvent(event);
         }
     }
@@ -86,16 +83,13 @@ public class PhotoSavePresenterImpl implements PhotoSavePresenter, PhotoSaveInte
             FirebaseUser firebaseUser = mAuth.getCurrentUser();
             if (firebaseUser != null) {
                 mPhoto = new Photo(title, desc, firebaseUser.getUid());
-                Single.fromCallable(() -> {
-                    File compressedImageFile = mManager.compressImage(mTempImageFile);
-                    return Uri.fromFile(compressedImageFile);
-                })
+                Single.fromCallable(() -> mManager.compressImage(mTempImageFile))
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                imageUri -> mInteractor.savePhoto(
+                                file -> mInteractor.savePhoto(
                                         mPhoto,
-                                        imageUri,
+                                        new FileInputStream(file),
                                         PhotoSavePresenterImpl.this
                                 ),
                                 throwable -> onSaveError()

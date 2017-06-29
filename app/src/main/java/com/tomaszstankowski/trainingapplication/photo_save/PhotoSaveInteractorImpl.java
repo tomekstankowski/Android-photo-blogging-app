@@ -1,10 +1,11 @@
 package com.tomaszstankowski.trainingapplication.photo_save;
 
-import android.net.Uri;
-
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.model.DataBaseAccessor;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
+
+import java.io.InputStream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,12 +29,17 @@ public class PhotoSaveInteractorImpl implements PhotoSaveInteractor {
     }
 
     @Override
-    public void savePhoto(Photo photo, Uri imageUri, OnPhotoSaveListener listener) {
+    public void savePhoto(Photo photo, InputStream imageInputStream, OnPhotoSaveListener listener) {
         mDataAccessor.savePhoto(photo)
-                .addOnSuccessListener(aVoid -> mStorageAccessor.saveImage(photo, imageUri)
+                .addOnSuccessListener(aVoid -> mStorageAccessor.saveImage(photo.key, imageInputStream)
                         .addOnSuccessListener(taskSnapshot -> listener.onSaveSuccess())
                         .addOnFailureListener(e -> listener.onSaveError()))
                 .addOnFailureListener(r -> listener.onSaveError());
+    }
+
+    @Override
+    public StorageReference getImage(Photo photo) {
+        return mStorageAccessor.getImage(photo.key);
     }
 
 }

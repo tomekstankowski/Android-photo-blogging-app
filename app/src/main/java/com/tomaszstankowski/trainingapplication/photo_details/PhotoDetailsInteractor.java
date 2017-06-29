@@ -1,5 +1,6 @@
 package com.tomaszstankowski.trainingapplication.photo_details;
 
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.model.User;
 
@@ -31,4 +32,6 @@ public interface PhotoDetailsInteractor {
     void removePhoto(Photo photo, OnPhotoRemoveListener listener);
 
     void getUser(String key, OnUserFetchListener listener);
+
+    StorageReference getImage(Photo photo);
 }

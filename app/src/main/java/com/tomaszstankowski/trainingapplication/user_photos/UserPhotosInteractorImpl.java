@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.model.DataBaseAccessor;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.model.StorageAccessor;
@@ -48,8 +49,8 @@ public class UserPhotosInteractorImpl implements UserPhotosInteractor, ChildEven
                 Photo photo = dataSnapshot.getValue(Photo.class);
                 if (photo != null) {
                     photo.key = key;
-                    mStorageAccessor.getImageUri(photo)
-                            .addOnSuccessListener(uri -> mListener.onPhotoAdded(photo, uri));
+                    StorageReference image = mStorageAccessor.getImage(photo.key);
+                    mListener.onPhotoAdded(photo, image);
                 }
             }
 

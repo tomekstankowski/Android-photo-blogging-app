@@ -1,8 +1,7 @@
 package com.tomaszstankowski.trainingapplication.discover;
 
 
-import android.net.Uri;
-
+import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
@@ -23,7 +22,7 @@ public class DiscoverPresenterImpl implements DiscoverPresenter,
     private DiscoverView mView;
     private DiscoverInteractor mInteractor;
     private List<Photo> mPhotos = new ArrayList<>();
-    private Map<String, Uri> mImages = new HashMap<>();
+    private Map<String, StorageReference> mImages = new HashMap<>();
 
     @Inject
     DiscoverPresenterImpl(DiscoverInteractor interactor) {
@@ -47,15 +46,14 @@ public class DiscoverPresenterImpl implements DiscoverPresenter,
     @Override
     public void onPhotoClicked(int pos) {
         Photo photo = mPhotos.get(pos);
-        Uri image = mImages.get(photo.key);
         mView.startPhotoDetailsView();
         EventBus.getDefault().postSticky(
-                new PhotoTransferEvent(photo, image, Config.RC_PHOTO_DETAILS)
+                new PhotoTransferEvent(photo, Config.RC_PHOTO_DETAILS)
         );
     }
 
     @Override
-    public void onPhotoAdded(Photo photo, Uri image) {
+    public void onPhotoAdded(Photo photo, StorageReference image) {
         if (!mImages.containsKey(photo.key)) {
             mPhotos.add(photo);
             mImages.put(photo.key, image);
