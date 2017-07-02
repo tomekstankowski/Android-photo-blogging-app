@@ -3,11 +3,9 @@ package com.tomaszstankowski.trainingapplication.discover;
 
 import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
-import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 
-import org.greenrobot.eventbus.EventBus;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,10 +44,9 @@ public class DiscoverPresenterImpl implements DiscoverPresenter,
     @Override
     public void onPhotoClicked(int pos) {
         Photo photo = mPhotos.get(pos);
-        mView.startPhotoDetailsView();
-        EventBus.getDefault().postSticky(
-                new PhotoTransferEvent(photo, Config.RC_PHOTO_DETAILS)
-        );
+        Map<String, Serializable> args = new HashMap<>();
+        args.put(Config.ARG_PHOTO, photo);
+        mView.startPhotoDetailsView(args);
     }
 
     @Override

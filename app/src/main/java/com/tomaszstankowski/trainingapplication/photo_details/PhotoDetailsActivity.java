@@ -1,9 +1,12 @@
 package com.tomaszstankowski.trainingapplication.photo_details;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -17,6 +20,9 @@ import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -28,6 +34,20 @@ import butterknife.OnClick;
  */
 
 public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDetailsView {
+
+    public static void start(Context context) {
+        Intent starter = new Intent(context, PhotoDetailsActivity.class);
+        context.startActivity(starter);
+    }
+
+    public static void start(Context context, Map<String, Serializable> extras) {
+        Intent starter = new Intent(context, PhotoDetailsActivity.class);
+        for (Map.Entry<String, Serializable> e : extras.entrySet()) {
+            starter.putExtra(e.getKey(), e.getValue());
+        }
+        context.startActivity(starter);
+    }
+
     @Inject
     PhotoDetailsPresenter mPresenter;
 
@@ -49,6 +69,8 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     ImageView mImageView;
     @BindView(R.id.activity_photo_details_progressbar)
     ProgressBar mProgressBar;
+    @BindView(R.id.activity_photo_details_toolbar)
+    Toolbar mToolbar;
 
     @OnClick(R.id.activity_photo_details_button_edit)
     public void onEditButtonClicked() {
@@ -66,6 +88,12 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
         setContentView(R.layout.activity_photo_details);
         ButterKnife.bind(this);
         ((App) getApplication()).getMainComponent().inject(this);
+        setSupportActionBar(mToolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle("");
+        }
         mPresenter.onCreateView(this);
     }
 
@@ -76,9 +104,14 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     }
 
     @Override
-    public void startPhotoSaveView() {
-        Intent intent = new Intent(this, PhotoSaveActivity.class);
-        startActivity(intent);
+    public void startPhotoSaveView(Map<String, Serializable> args) {
+        PhotoSaveActivity.start(this, args);
+    }
+
+    @Override
+    public Serializable getArg(String key) {
+        Intent intent = getIntent();
+        return intent != null ? intent.getSerializableExtra(key) : null;
     }
 
     @Override

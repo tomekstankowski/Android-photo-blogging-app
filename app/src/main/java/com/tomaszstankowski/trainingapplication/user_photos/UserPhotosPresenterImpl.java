@@ -4,11 +4,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
-import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 
-import org.greenrobot.eventbus.EventBus;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,10 +51,9 @@ public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosI
     @Override
     public void onPhotoClicked(int position) {
         Photo photo = mPhotos.get(position);
-        mView.startPhotoDetailsView();
-        EventBus.getDefault().postSticky(
-                new PhotoTransferEvent(photo, Config.RC_PHOTO_DETAILS)
-        );
+        Map<String, Serializable> args = new HashMap<>();
+        args.put(Config.ARG_PHOTO, photo);
+        mView.startPhotoDetailsView(args);
     }
 
     @Override

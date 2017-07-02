@@ -56,8 +56,7 @@ public class PhotoDetailsInteractorImpl implements PhotoDetailsInteractor, Value
         if (photo != null) {
             photo.key = dataSnapshot.getKey();
             mListener.onPhotoChange(photo);
-        } else
-            mListener.onPhotoFetchError();
+        }
     }
 
     @Override

@@ -3,6 +3,9 @@ package com.tomaszstankowski.trainingapplication.photo_details;
 
 import com.google.firebase.storage.StorageReference;
 
+import java.io.Serializable;
+import java.util.Map;
+
 /**
  * View layer implemented by PhotoDetailsActivity.
  */
@@ -17,7 +20,9 @@ interface PhotoDetailsView {
 
     void updateAuthorView(String author, boolean isAuthor);
 
-    void startPhotoSaveView();
+    void startPhotoSaveView(Map<String, Serializable> args);
+
+    Serializable getArg(String key);
 
     void showProgressBar();
 

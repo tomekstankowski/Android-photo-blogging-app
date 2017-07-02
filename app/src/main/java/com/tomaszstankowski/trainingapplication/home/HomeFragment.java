@@ -28,6 +28,8 @@ import com.tomaszstankowski.trainingapplication.util.CameraException;
 import com.tomaszstankowski.trainingapplication.util.FileUtil;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -117,15 +119,13 @@ public class HomeFragment extends Fragment implements HomeView {
     }
 
     @Override
-    public void startPhotoDetailsView() {
-        Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
-        startActivity(intent);
+    public void startPhotoDetailsView(Map<String, Serializable> args) {
+        PhotoDetailsActivity.start(getActivity(), args);
     }
 
     @Override
-    public void startPhotoSaveView() {
-        Intent intent = new Intent(getActivity(), PhotoSaveActivity.class);
-        startActivityForResult(intent, Config.RC_PHOTO_SAVE);
+    public void startPhotoSaveViewForResult(Map<String, Serializable> args) {
+        PhotoSaveActivity.startForResult(this, Config.RC_PHOTO_SAVE, args);
     }
 
     @Override

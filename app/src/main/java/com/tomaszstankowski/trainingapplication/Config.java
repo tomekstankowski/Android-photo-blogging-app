@@ -24,4 +24,7 @@ public class Config {
 
     /*Communication with Firebase AuthUI*/
     public static final int RC_AUTH_UI = 999;
+
+    public static final String ARG_PHOTO = "PHOTO";
+    public static final String ARG_TEMP_IMAGE_FILE = "TEMP_IMAGE_FILE";
 }

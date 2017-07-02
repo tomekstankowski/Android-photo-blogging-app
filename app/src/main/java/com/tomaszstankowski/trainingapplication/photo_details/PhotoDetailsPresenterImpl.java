@@ -4,13 +4,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
-import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.model.User;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,20 +33,9 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
     @Override
     public void onCreateView(PhotoDetailsView view) {
         mView = view;
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onDestroyView() {
-        mView = null;
-        EventBus.getDefault().unregister(this);
-        mInteractor.stopObservingPhoto();
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void onPhotoTransferEvent(PhotoTransferEvent event) {
-        if (event.requestCode == Config.RC_PHOTO_DETAILS) {
-            mPhoto = event.photo;
+        Serializable photo = mView.getArg(Config.ARG_PHOTO);
+        if (photo != null && photo instanceof Photo) {
+            mPhoto = (Photo) photo;
             mInteractor.observePhoto(mPhoto.key, this);
             mImage = mInteractor.getImage(mPhoto);
             onPhotoChange(mPhoto);
@@ -59,9 +47,13 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
             } else {
                 mInteractor.getUser(mPhoto.userKey, this);
             }
-
-            EventBus.getDefault().removeStickyEvent(event);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        mView = null;
+        mInteractor.stopObservingPhoto();
     }
 
     @Override
@@ -105,10 +97,9 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
 
     @Override
     public void onEditButtonClicked() {
-        mView.startPhotoSaveView();
-        EventBus.getDefault().postSticky(new PhotoTransferEvent(
-                mPhoto, Config.RC_PHOTO_SAVE)
-        );
+        Map<String, Serializable> args = new HashMap<>();
+        args.put(Config.ARG_PHOTO, mPhoto);
+        mView.startPhotoSaveView(args);
     }
 
     @Override

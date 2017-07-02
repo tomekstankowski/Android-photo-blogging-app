@@ -1,6 +1,5 @@
 package com.tomaszstankowski.trainingapplication.user_photos;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +15,9 @@ import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
 import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
 import com.tomaszstankowski.trainingapplication.ui.GalleryViewAdapter;
+
+import java.io.Serializable;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -77,9 +79,8 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     }
 
     @Override
-    public void startPhotoDetailsView() {
-        Intent intent = new Intent(getActivity(), PhotoDetailsActivity.class);
-        startActivity(intent);
+    public void startPhotoDetailsView(Map<String, Serializable> args) {
+        PhotoDetailsActivity.start(getActivity(), args);
     }
 
     @Override

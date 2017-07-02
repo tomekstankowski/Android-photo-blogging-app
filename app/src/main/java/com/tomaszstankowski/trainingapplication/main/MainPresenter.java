@@ -8,8 +8,6 @@ public interface MainPresenter {
 
     void onCreateView(MainView view);
 
-    void onStartView();
-
     void onLoginViewResult(int resultCode);
 
     void onDestroy();

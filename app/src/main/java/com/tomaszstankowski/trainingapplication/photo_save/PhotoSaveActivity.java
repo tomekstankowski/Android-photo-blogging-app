@@ -1,6 +1,9 @@
 package com.tomaszstankowski.trainingapplication.photo_save;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +18,8 @@ import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -28,6 +33,33 @@ import butterknife.OnClick;
  */
 
 public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveView {
+
+    public static void start(Activity activity, Map<String, Serializable> extras) {
+        Intent starter = new Intent(activity, PhotoSaveActivity.class);
+        for (Map.Entry<String, Serializable> e : extras.entrySet()) {
+            starter.putExtra(e.getKey(), e.getValue());
+        }
+        activity.startActivity(starter);
+    }
+
+    public static void startForResult(Activity activity, int requestCode,
+                                      Map<String, Serializable> extras) {
+        Intent starter = new Intent(activity, PhotoSaveActivity.class);
+        for (Map.Entry<String, Serializable> e : extras.entrySet()) {
+            starter.putExtra(e.getKey(), e.getValue());
+        }
+        activity.startActivityForResult(starter, requestCode);
+    }
+
+    public static void startForResult(Fragment fragment, int requestCode,
+                                      Map<String, Serializable> extras) {
+        Intent starter = new Intent(fragment.getContext(), PhotoSaveActivity.class);
+        for (Map.Entry<String, Serializable> e : extras.entrySet()) {
+            starter.putExtra(e.getKey(), e.getValue());
+        }
+        fragment.startActivityForResult(starter, requestCode);
+    }
+
     @Inject
     PhotoSavePresenter mPresenter;
 
@@ -69,6 +101,12 @@ public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveVie
     public void onDestroy() {
         mPresenter.onDestroyView();
         super.onDestroy();
+    }
+
+    @Override
+    public Serializable getArg(String key) {
+        Intent intent = getIntent();
+        return intent != null ? intent.getSerializableExtra(key) : null;
     }
 
     @Override

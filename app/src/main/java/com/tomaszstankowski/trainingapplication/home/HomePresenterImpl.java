@@ -1,18 +1,16 @@
 package com.tomaszstankowski.trainingapplication.home;
 
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
-import com.tomaszstankowski.trainingapplication.event.PhotoTransferEvent;
-import com.tomaszstankowski.trainingapplication.event.TempImageFileTransferEvent;
 import com.tomaszstankowski.trainingapplication.model.Photo;
 import com.tomaszstankowski.trainingapplication.util.ImageManager;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -85,10 +83,9 @@ public class HomePresenterImpl implements HomePresenter, HomeInteractor.OnLastPh
     @Override
     public void onImageClicked() {
         if (mPhoto != null) {
-            mView.startPhotoDetailsView();
-            EventBus.getDefault().postSticky(
-                    new PhotoTransferEvent(mPhoto, Config.RC_PHOTO_DETAILS)
-            );
+            Map<String, Serializable> args = new HashMap<>();
+            args.put(Config.ARG_PHOTO, mPhoto);
+            mView.startPhotoDetailsView(args);
         }
     }
 
@@ -100,10 +97,9 @@ public class HomePresenterImpl implements HomePresenter, HomeInteractor.OnLastPh
             //so we stop observing database when save operation is performed
             mInteractor.stopObservingUserLastPhoto();
             mManager.addImageToSystemGallery(mTempImageFile);
-            mView.startPhotoSaveView();
-            EventBus.getDefault().postSticky(
-                    new TempImageFileTransferEvent(mTempImageFile, Config.RC_PHOTO_SAVE)
-            );
+            Map<String, Serializable> args = new HashMap<>();
+            args.put(Config.ARG_TEMP_IMAGE_FILE, mTempImageFile);
+            mView.startPhotoSaveViewForResult(args);
         } else {
             mView.showMessage(HomeView.Message.CAMERA_ERROR);
         }
@@ -111,12 +107,10 @@ public class HomePresenterImpl implements HomePresenter, HomeInteractor.OnLastPh
 
     @Override
     public void onPhotoSaveViewResult(int resultCode) {
-        if (resultCode == Config.PHOTO_SAVE_OK) {
-            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-            if (firebaseUser != null) {
-                //was temporary removed just before starting PhotoSaveView
-                mInteractor.observeUserLastPhoto(firebaseUser.getUid(), this);
-            }
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        if (firebaseUser != null) {
+            //was temporary removed just before starting PhotoSaveView
+            mInteractor.observeUserLastPhoto(firebaseUser.getUid(), this);
         }
     }
 }

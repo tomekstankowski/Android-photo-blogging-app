@@ -18,13 +18,6 @@ public class MainPresenterImpl implements MainPresenter{
     @Override
     public void onCreateView(MainView view) {
         mView = view;
-        if (mAuth.getCurrentUser() != null)
-            mView.showHomePage();
-    }
-
-    @Override
-    public void onStartView() {
-        //check if the user is signed in
         if (mAuth.getCurrentUser() == null)
             mView.startLoginView(Config.LOGIN_VIEW_MODE_DEFAULT);
     }

@@ -55,14 +55,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     .commit();
             return true;
         });
-
+        if (savedInstanceState == null)
+            showHomePage();
         mPresenter.onCreateView(this);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        mPresenter.onStartView();
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.util.CameraException;
 
 import java.io.File;
+import java.io.Serializable;
+import java.util.Map;
 
 /**
  * View layer implemented by HomeFragment
@@ -19,9 +21,9 @@ interface HomeView {
 
     void startSystemCamera(File targeFile) throws CameraException;
 
-    void startPhotoDetailsView();
+    void startPhotoDetailsView(Map<String, Serializable> args);
 
-    void startPhotoSaveView();
+    void startPhotoSaveViewForResult(Map<String, Serializable> args);
 
     void showMessage(Message message);
 
