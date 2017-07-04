@@ -23,6 +23,7 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
     private PhotoDetailsInteractor mInteractor;
     private PhotoDetailsView mView;
     private Photo mPhoto;
+    private User mUser;
     private StorageReference mImage;
 
     @Inject
@@ -85,14 +86,25 @@ public class PhotoDetailsPresenterImpl implements PhotoDetailsPresenter,
 
     @Override
     public void onUserFetchSuccess(User user) {
+        mUser = user;
         if (mView != null)
             mView.updateAuthorView(user.name, false);
     }
 
     @Override
     public void onUserFetchFailure() {
+        mUser = null;
         if (mView != null)
             mView.showMessage(PhotoDetailsView.Message.LOAD_ERROR);
+    }
+
+    @Override
+    public void onUserClicked() {
+        if (mUser != null) {
+            Map<String, Serializable> args = new HashMap<>();
+            args.put(Config.ARG_USER, mUser);
+            mView.startUserView(args);
+        }
     }
 
     @Override

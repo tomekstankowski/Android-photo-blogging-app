@@ -30,7 +30,7 @@
         <activity android:name=".photo_save.PhotoSaveActivity"/>
 
         <activity
-            android:name=".photo_details.PhotoDetailsActivity"
+            android:name=".details.DetailsActivity"
             android:parentActivityName=".main.MainActivity" />
 
         <provider

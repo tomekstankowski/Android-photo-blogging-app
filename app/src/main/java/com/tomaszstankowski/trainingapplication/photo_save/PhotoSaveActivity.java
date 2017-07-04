@@ -1,6 +1,5 @@
 package com.tomaszstankowski.trainingapplication.photo_save;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -34,21 +33,12 @@ import butterknife.OnClick;
 
 public class PhotoSaveActivity extends AppCompatActivity implements PhotoSaveView {
 
-    public static void start(Activity activity, Map<String, Serializable> extras) {
-        Intent starter = new Intent(activity, PhotoSaveActivity.class);
+    public static void start(Fragment fragment, Map<String, Serializable> extras) {
+        Intent starter = new Intent(fragment.getContext(), PhotoSaveActivity.class);
         for (Map.Entry<String, Serializable> e : extras.entrySet()) {
             starter.putExtra(e.getKey(), e.getValue());
         }
-        activity.startActivity(starter);
-    }
-
-    public static void startForResult(Activity activity, int requestCode,
-                                      Map<String, Serializable> extras) {
-        Intent starter = new Intent(activity, PhotoSaveActivity.class);
-        for (Map.Entry<String, Serializable> e : extras.entrySet()) {
-            starter.putExtra(e.getKey(), e.getValue());
-        }
-        activity.startActivityForResult(starter, requestCode);
+        fragment.startActivity(starter);
     }
 
     public static void startForResult(Fragment fragment, int requestCode,

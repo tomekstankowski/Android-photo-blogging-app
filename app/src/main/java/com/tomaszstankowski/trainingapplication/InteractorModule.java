@@ -12,8 +12,8 @@ import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveInteractor;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveInteractorImpl;
 import com.tomaszstankowski.trainingapplication.settings.SettingsInteractor;
 import com.tomaszstankowski.trainingapplication.settings.SettingsInteractorImpl;
-import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosInteractor;
-import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosInteractorImpl;
+import com.tomaszstankowski.trainingapplication.user_details.UserDetailsInteractor;
+import com.tomaszstankowski.trainingapplication.user_details.UserDetailsInteractorImpl;
 
 import javax.inject.Singleton;
 
@@ -50,7 +50,7 @@ class InteractorModule {
 
     @Provides
     @Singleton
-    UserPhotosInteractor providesUserPhotosInteractor(UserPhotosInteractorImpl impl) {
+    UserDetailsInteractor providesUserProfileInteractor(UserDetailsInteractorImpl impl) {
         return impl;
     }
 

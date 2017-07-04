@@ -10,5 +10,7 @@ public interface MainPresenter {
 
     void onLoginViewResult(int resultCode);
 
+    void onNavigateRequest(MainView.Navigable navigable);
+
     void onDestroy();
 }

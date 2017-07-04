@@ -1,10 +1,11 @@
-package com.tomaszstankowski.trainingapplication.user_photos;
+package com.tomaszstankowski.trainingapplication.user_details;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.model.Photo;
+import com.tomaszstankowski.trainingapplication.model.User;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,26 +18,38 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class UserPhotosPresenterImpl implements UserPhotosPresenter, UserPhotosInteractor.OnUserPhotosChangesListener {
+public class UserDetailsPresenterImpl implements UserDetailsPresenter, UserDetailsInteractor.OnUserPhotosChangesListener {
 
     private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private UserPhotosView mView;
-    private UserPhotosInteractor mInteractor;
+    private UserDetailsView mView;
+    private UserDetailsInteractor mInteractor;
     private List<Photo> mPhotos = new ArrayList<>();
     private Map<String, StorageReference> mImages = new HashMap<>();
 
     @Inject
-    UserPhotosPresenterImpl(UserPhotosInteractor interactor) {
+    UserDetailsPresenterImpl(UserDetailsInteractor interactor) {
         mInteractor = interactor;
     }
 
     @Override
-    public void onCreateView(UserPhotosView view) {
+    public void onCreateView(UserDetailsView view) {
         mView = view;
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        if (firebaseUser != null) {
-            mInteractor.observeUserPhotos(firebaseUser.getUid(), this);
-            mView.updateUsername(firebaseUser.getDisplayName());
+        Serializable mode = mView.getArg(Config.USER_DETAILS_MODE);
+        if (mode != null && mode instanceof Integer) {
+            if (mode.equals(Config.USER_DETAILS_MODE_CURRENT)) {
+                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                if (firebaseUser != null) {
+                    mInteractor.observeUserPhotos(firebaseUser.getUid(), this);
+                    mView.updateUsername(firebaseUser.getDisplayName());
+                }
+            } else if (mode.equals(Config.USER_DETAILS_MODE_DEFAULT)) {
+                Serializable arg = mView.getArg(Config.ARG_USER);
+                if (arg != null && arg instanceof User) {
+                    User user = (User) arg;
+                    mInteractor.observeUserPhotos(user.key, this);
+                    mView.updateUsername(user.name);
+                }
+            }
         }
     }
 

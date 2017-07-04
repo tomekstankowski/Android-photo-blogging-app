@@ -1,13 +1,11 @@
 package com.tomaszstankowski.trainingapplication.photo_details;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -17,7 +15,9 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.App;
+import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.R;
+import com.tomaszstankowski.trainingapplication.details.DetailsView;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
 
 import java.io.Serializable;
@@ -28,28 +28,20 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Activity displaying photo.
  */
 
-public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDetailsView {
-
-    public static void start(Context context) {
-        Intent starter = new Intent(context, PhotoDetailsActivity.class);
-        context.startActivity(starter);
-    }
-
-    public static void start(Context context, Map<String, Serializable> extras) {
-        Intent starter = new Intent(context, PhotoDetailsActivity.class);
-        for (Map.Entry<String, Serializable> e : extras.entrySet()) {
-            starter.putExtra(e.getKey(), e.getValue());
-        }
-        context.startActivity(starter);
-    }
+public class PhotoDetailsFragment extends Fragment implements PhotoDetailsView {
 
     @Inject
     PhotoDetailsPresenter mPresenter;
+
+    private DetailsView mParent;
+
+    private Unbinder mUnbinder;
 
     @BindView(R.id.activity_photo_details_rootview)
     View mRootView;
@@ -69,8 +61,6 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     ImageView mImageView;
     @BindView(R.id.activity_photo_details_progressbar)
     ProgressBar mProgressBar;
-    @BindView(R.id.activity_photo_details_toolbar)
-    Toolbar mToolbar;
 
     @OnClick(R.id.activity_photo_details_button_edit)
     public void onEditButtonClicked() {
@@ -82,25 +72,42 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
         mPresenter.onRemoveButtonClicked();
     }
 
+    @OnClick(R.id.activity_photo_details_textview_author)
+    public void onUserClicked() {
+        mPresenter.onUserClicked();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_photo_details);
-        ButterKnife.bind(this);
-        ((App) getApplication()).getMainComponent().inject(this);
-        setSupportActionBar(mToolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle("");
+        ((App) getActivity().getApplication()).getMainComponent().inject(this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_photo_details, container, false);
+        mUnbinder = ButterKnife.bind(this, v);
+        return v;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        try {
+            mParent = (DetailsView) getActivity();
+        } catch (ClassCastException e) {
+            throw new ClassCastException(getActivity().toString() + " must implement DetailsView");
         }
         mPresenter.onCreateView(this);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
         mPresenter.onDestroyView();
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 
     @Override
@@ -109,9 +116,19 @@ public class PhotoDetailsActivity extends AppCompatActivity implements PhotoDeta
     }
 
     @Override
+    public void startUserView(Map<String, Serializable> args) {
+        args.put(Config.USER_DETAILS_MODE, Config.USER_DETAILS_MODE_DEFAULT);
+        mParent.switchPage(DetailsView.Page.USER, args);
+    }
+
+    @Override
     public Serializable getArg(String key) {
-        Intent intent = getIntent();
-        return intent != null ? intent.getSerializableExtra(key) : null;
+        return getArguments() == null ? null : getArguments().getSerializable(key);
+    }
+
+    @Override
+    public void finish() {
+        mParent.back();
     }
 
     @Override

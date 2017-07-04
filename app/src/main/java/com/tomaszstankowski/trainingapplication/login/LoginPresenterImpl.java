@@ -24,7 +24,7 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUse
     private LoginInteractor mInteractor;
 
     @Inject
-    public LoginPresenterImpl(LoginInteractor interactor) {
+    LoginPresenterImpl(LoginInteractor interactor) {
         mInteractor = interactor;
     }
 
@@ -32,10 +32,10 @@ public class LoginPresenterImpl implements LoginPresenter, LoginInteractor.OnUse
     public void onCreateView(LoginView view, int mode) {
         mView = view;
         switch (mode) {
-            case Config.LOGIN_VIEW_MODE_DEFAULT:
+            case Config.LOGIN_MODE_DEFAULT:
                 startAuthUI();
                 break;
-            case Config.LOGIN_VIEW_MODE_LOGGED_OUT:
+            case Config.LOGIN_MODE_LOGGED_OUT:
                 mView.showLoggedOutView();
                 break;
         }

@@ -13,7 +13,10 @@ import com.tomaszstankowski.trainingapplication.discover.DiscoverFragment;
 import com.tomaszstankowski.trainingapplication.home.HomeFragment;
 import com.tomaszstankowski.trainingapplication.login.LoginActivity;
 import com.tomaszstankowski.trainingapplication.settings.SettingsFragment;
-import com.tomaszstankowski.trainingapplication.user_photos.UserPhotosFragment;
+import com.tomaszstankowski.trainingapplication.user_details.MyUserDetailsFragment;
+
+import java.io.Serializable;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -35,35 +38,60 @@ public class MainActivity extends AppCompatActivity implements MainView {
         ((App) getApplication()).getMainComponent().inject(this);
 
         mNavigationBar.setOnNavigationItemSelectedListener(item -> {
-            Fragment fragment = null;
             switch (item.getItemId()) {
                 case R.id.activity_main_menu_home:
-                    fragment = new HomeFragment();
+                    mPresenter.onNavigateRequest(Navigable.HOME);
                     break;
                 case R.id.activity_main_menu_discover:
-                    fragment = new DiscoverFragment();
+                    mPresenter.onNavigateRequest(Navigable.DISCOVER);
                     break;
                 case R.id.activity_main_menu_my_profile:
-                    fragment = new UserPhotosFragment();
+                    mPresenter.onNavigateRequest(Navigable.MY_PROFILE);
                     break;
                 case R.id.activity_main_menu_settings:
-                    fragment = new SettingsFragment();
+                    mPresenter.onNavigateRequest(Navigable.SETTINGS);
                     break;
             }
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.activity_main_fragment_container, fragment)
-                    .commit();
             return true;
         });
         if (savedInstanceState == null)
-            showHomePage();
+            navigate(Navigable.HOME, null);
         mPresenter.onCreateView(this);
+    }
+
+    @Override
+    public void navigate(Navigable navigable, Map<String, Serializable> args) {
+        Fragment fragment = null;
+        switch (navigable) {
+            case HOME:
+                fragment = new HomeFragment();
+                break;
+            case DISCOVER:
+                fragment = new DiscoverFragment();
+                break;
+            case MY_PROFILE:
+                fragment = new MyUserDetailsFragment();
+                break;
+            case SETTINGS:
+                fragment = new SettingsFragment();
+                break;
+        }
+        if (args != null) {
+            Bundle bundle = new Bundle();
+            for (Map.Entry<String, Serializable> e : args.entrySet()) {
+                bundle.putSerializable(e.getKey(), e.getValue());
+            }
+            fragment.setArguments(bundle);
+        }
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_main_fragment_container, fragment)
+                .commit();
     }
 
     @Override
     public void startLoginView(int mode) {
         Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra(Config.LOGIN_VIEW_MODE, mode);
+        intent.putExtra(Config.LOGIN_MODE, mode);
         startActivityForResult(intent, Config.RC_LOGIN);
     }
 
@@ -72,11 +100,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Config.RC_LOGIN)
             mPresenter.onLoginViewResult(resultCode);
-    }
-
-    @Override
-    public void showHomePage() {
-        mNavigationBar.setSelectedItemId(R.id.activity_main_menu_home);
     }
 
     @Override

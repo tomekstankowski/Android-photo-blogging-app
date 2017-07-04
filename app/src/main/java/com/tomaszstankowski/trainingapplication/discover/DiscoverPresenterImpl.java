@@ -54,7 +54,8 @@ public class DiscoverPresenterImpl implements DiscoverPresenter,
         if (!mImages.containsKey(photo.key)) {
             mPhotos.add(photo);
             mImages.put(photo.key, image);
-            mView.addPhoto(image);
+            if (mView != null)
+                mView.addPhoto(image);
         }
     }
 

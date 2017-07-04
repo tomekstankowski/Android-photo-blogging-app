@@ -83,7 +83,7 @@ public class SettingsFragment extends Fragment implements SettingsView {
     @Override
     public void startLoginView(int mode) {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
-        intent.putExtra(Config.LOGIN_VIEW_MODE, mode);
+        intent.putExtra(Config.LOGIN_MODE, mode);
         getActivity().startActivityForResult(
                 intent,
                 Config.RC_LOGIN);

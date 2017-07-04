@@ -1,4 +1,4 @@
-package com.tomaszstankowski.trainingapplication.user_photos;
+package com.tomaszstankowski.trainingapplication.user_details;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,13 +11,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.storage.StorageReference;
-import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.R;
-import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
 import com.tomaszstankowski.trainingapplication.ui.GalleryViewAdapter;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -25,13 +22,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
-/**
- * Fragment showing all photos of the given user.
- */
-
-public class UserPhotosFragment extends Fragment implements UserPhotosView, GalleryViewAdapter.OnItemClickListener {
+public abstract class AbstractUserDetailsFragment extends Fragment implements UserDetailsView, GalleryViewAdapter.OnItemClickListener {
     @Inject
-    UserPhotosPresenter mPresenter;
+    UserDetailsPresenter mPresenter;
 
     @BindView(R.id.fragment_user_photos_recyclerview)
     RecyclerView mRecyclerView;
@@ -46,15 +39,9 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     private Unbinder mUnbinder;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ((App) getActivity().getApplication()).getMainComponent().inject(this);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_user_photos, container, false);
+        View v = inflater.inflate(R.layout.fragment_user_details, container, false);
         mUnbinder = ButterKnife.bind(this, v);
         return v;
     }
@@ -68,6 +55,7 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
         mAdapter.setOnItemClickListener(this);
         mRecyclerView.setAdapter(mAdapter);
         updatePhotosCount();
+
         mPresenter.onCreateView(this);
     }
 
@@ -79,8 +67,8 @@ public class UserPhotosFragment extends Fragment implements UserPhotosView, Gall
     }
 
     @Override
-    public void startPhotoDetailsView(Map<String, Serializable> args) {
-        PhotoDetailsActivity.start(getActivity(), args);
+    public Serializable getArg(String key) {
+        return getArguments() == null ? null : getArguments().getSerializable(key);
     }
 
     @Override

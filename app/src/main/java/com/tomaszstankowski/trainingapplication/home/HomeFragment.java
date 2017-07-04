@@ -22,7 +22,7 @@ import com.google.firebase.storage.StorageReference;
 import com.tomaszstankowski.trainingapplication.App;
 import com.tomaszstankowski.trainingapplication.Config;
 import com.tomaszstankowski.trainingapplication.R;
-import com.tomaszstankowski.trainingapplication.photo_details.PhotoDetailsActivity;
+import com.tomaszstankowski.trainingapplication.details.DetailsActivity;
 import com.tomaszstankowski.trainingapplication.photo_save.PhotoSaveActivity;
 import com.tomaszstankowski.trainingapplication.util.CameraException;
 import com.tomaszstankowski.trainingapplication.util.FileUtil;
@@ -120,7 +120,8 @@ public class HomeFragment extends Fragment implements HomeView {
 
     @Override
     public void startPhotoDetailsView(Map<String, Serializable> args) {
-        PhotoDetailsActivity.start(getActivity(), args);
+        args.put(Config.DETAILS_MODE, Config.DETAILS_MODE_PHOTO);
+        DetailsActivity.start(getContext(), args);
     }
 
     @Override

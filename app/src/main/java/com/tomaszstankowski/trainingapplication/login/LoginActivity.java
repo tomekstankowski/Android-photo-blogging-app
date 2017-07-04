@@ -55,9 +55,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         ButterKnife.bind(this);
         ((App) getApplication()).getMainComponent().inject(this);
         Intent intent = getIntent();
-        int mode = Config.LOGIN_VIEW_MODE_DEFAULT;
+        int mode = Config.LOGIN_MODE_DEFAULT;
         if (intent != null)
-            mode = intent.getIntExtra(Config.LOGIN_VIEW_MODE, mode);
+            mode = intent.getIntExtra(Config.LOGIN_MODE, mode);
         mPresenter.onCreateView(this, mode);
     }
 

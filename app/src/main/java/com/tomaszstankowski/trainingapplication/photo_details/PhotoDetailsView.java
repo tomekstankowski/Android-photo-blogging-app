@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * View layer implemented by PhotoDetailsActivity.
+ * View layer implemented by PhotoDetailsFragment.
  */
 
 interface PhotoDetailsView {
@@ -21,6 +21,8 @@ interface PhotoDetailsView {
     void updateAuthorView(String author, boolean isAuthor);
 
     void startPhotoSaveView(Map<String, Serializable> args);
+
+    void startUserView(Map<String, Serializable> args);
 
     Serializable getArg(String key);
 

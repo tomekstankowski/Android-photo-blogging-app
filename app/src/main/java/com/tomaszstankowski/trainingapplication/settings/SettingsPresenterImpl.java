@@ -16,7 +16,7 @@ public class SettingsPresenterImpl implements SettingsPresenter,
     private SettingsInteractor mInteractor;
 
     @Inject
-    public SettingsPresenterImpl(SettingsInteractor interactor) {
+    SettingsPresenterImpl(SettingsInteractor interactor) {
         mInteractor = interactor;
     }
 
@@ -42,7 +42,7 @@ public class SettingsPresenterImpl implements SettingsPresenter,
     @Override
     public void onLogOutCompleted() {
         if (mView != null)
-            mView.startLoginView(Config.LOGIN_VIEW_MODE_LOGGED_OUT);
+            mView.startLoginView(Config.LOGIN_MODE_LOGGED_OUT);
     }
 
     @Override

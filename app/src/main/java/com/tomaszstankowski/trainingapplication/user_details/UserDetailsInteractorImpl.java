@@ -1,4 +1,4 @@
-package com.tomaszstankowski.trainingapplication.user_photos;
+package com.tomaszstankowski.trainingapplication.user_details;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -14,12 +14,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class UserPhotosInteractorImpl implements UserPhotosInteractor, ChildEventListener {
+public class UserDetailsInteractorImpl implements UserDetailsInteractor, ChildEventListener {
     private DataBaseAccessor mDataAccessor;
     private StorageAccessor mStorageAccessor;
 
     @Inject
-    UserPhotosInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor) {
+    UserDetailsInteractorImpl(DataBaseAccessor dataBaseAccessor, StorageAccessor storageAccessor) {
         mDataAccessor = dataBaseAccessor;
         mStorageAccessor = storageAccessor;
     }
